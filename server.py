@@ -1,13 +1,35 @@
 import socket
+import system
 
-s = socket.socket()
-host = socket.gethostname()
-port = 12345
-s.bind((host, port))
+# Create a TCP/IP socket
+sock = socket.socket(socke.AF_INET, socket.SOCK_STREAM)
 
-s.listen(5)
+# Bind the socket to the port
+server_address = ('localhost', 6461)
+print >>sys.stderr, 'start up on %s port %s' % server_address
+sock.bind(server_address)
+
+# list for incoming connectiosn
+sock.listen(1)
+
 while True:
-    c, addr = s.accept()
-    print 'Got connection from', addr
-    c.send('Thank you for connecting')
-    c.close()
+    # Wait for a connection
+    print >>sys.stderr, 'waiting for a connection'
+    connection, client_address = sock.accept()
+
+    try:
+        print >>sys.stderr, 'connection from', client_address
+
+        # Recieves the data in small chunkcs and retransmit it
+        while True:
+            data = connection.recv(16)
+            print >>sys.stderr, 'recieved "%s"' % data
+            if data:
+                print >>sys.stderr, 'sending back to client'
+                connection.sendall(data)
+            else:
+                print >>sys.stderr, 'no more data from', client_address
+                break
+    finally:
+        # Clean up the connection
+        connection.close()
