@@ -2,7 +2,7 @@ import socket
 import sys
 
 # Create a TCP/IP socket
-sock = socket.socket(socke.AF_INET, socket.SOCK_STREAM)
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Bind the socket to the port
 server_address = ('localhost', 6461)
