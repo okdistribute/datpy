@@ -47,3 +47,20 @@ def get_changes():
         raise Exception("You are not connected to DAT. Please enter \'dat listen\' ")
     return get_changes
 get_changes()
+
+def convert_to_dic():
+    # converting json to python dic
+    try:
+        call = port + '/api/rows'
+        req = requests.get(call, stream=True)
+        dat_python_dictionary = json.loads(req.text)
+        print dat_python_dictionary
+    except ValueError:
+        raise
+    return convert_to_dic
+convert_to_dic()
+
+
+
+
+
