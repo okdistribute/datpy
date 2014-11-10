@@ -10,7 +10,7 @@ def get_dat():
         req = requests.get(call, stream=True)
         print(req.content)
     except:
-        raise Exception("You are not Connected to DAT. Please enter \'dat listen\' ")
+        raise Exception("You are not connected to DAT. Please enter \'dat listen\' ")
     return get_dat
 get_dat()         
 
@@ -21,8 +21,18 @@ def get_datastore():
         req = requests.get(call, stream=True)
         print(req.content)
     except:
-        raise Exception("You are not Connected to DAT. Please enter \'dat listen\' ")
+        raise Exception("You are not connected to DAT. Please enter \'dat listen\' ")
     return get_datastore
 get_datastore()   
 
-      
+
+def get_session():
+    # get session info
+    try:
+        call = port + '/api/session'
+        req = requests.get(call, stream=True)
+        print(req.content)
+    except:
+        raise Exception("You are not connected to DAT. Please enter \'dat listen \' ")
+    return get_session
+get_session()
