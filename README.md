@@ -1,10 +1,8 @@
-## Dat and Python Integration
+# Dat and Python Integration: 
+DAT's Python API
 
-This is a rough list of what a Dat integrated into Python would look like. 
-
+Future Goals:
 * [Pandas I/O API](http://pandas.pydata.org/pandas-docs/stable/io.html)
-
-* [Integration with Blaze](http://blaze.pydata.org/docs/latest/index.html)
 
 * [Dat and Ipython](http://ipython.org/)
 
