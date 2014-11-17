@@ -26,5 +26,11 @@ class Dat:
         req = requests.get(call, stream=True)
         print(req.content)
 
+    def dic(self):
+        call = '{}/rows'.format(self.api_base)
+        req = requests.get(call, stream=True)
+        dat_dic = json.loads(req.text)
+        print dat_dic
+
 
 
