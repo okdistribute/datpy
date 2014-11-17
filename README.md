@@ -17,7 +17,7 @@ Read the [docs](https://github.com/maxogden/dat/blob/master/docs/what-is-dat.md)
 
 2. Create a dat using  using `dat init` and to listen to your dat run `dat listen`
 
-3. Import Dat 'from Dat import Dat' and set dat to the connection that you are listening to `dat = Dat('http://localhost:6461')`
+3. Import Dat 'from dat import Dat' and set dat to the connection that you are listening to `dat = Dat('http://localhost:6461')`
 
 
 ## DAT GET
