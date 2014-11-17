@@ -16,6 +16,11 @@ class Dat:
         req = requests.get(call, stream=True)
         print(req.content)
 
+    def session(self):
+        call = '{}/session'.format(self.api_base)
+        req = requests.get(call, stream=True)
+        print(req.content)
+
     def csv(self):
         call = '{}/csv'.format(self.api_base)
         req = requests.get(call, stream=True)
@@ -31,6 +36,3 @@ class Dat:
         req = requests.get(call, stream=True)
         dat_dic = json.loads(req.text)
         print dat_dic
-
-
-
