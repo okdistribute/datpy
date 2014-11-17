@@ -16,4 +16,9 @@ class Dat:
         req = requests.get(call, stream=True)
         print(req.content)
 
+    def csv(self):
+        call = '{}/csv'.format(self.api_base)
+        req = requests.get(call, stream=True)
+        print(req.content)
+
 
