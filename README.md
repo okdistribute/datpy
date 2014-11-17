@@ -25,13 +25,13 @@ The GET API allows user to access dat data store and it's attributes.
 
 
 ### DAT Info
-`dat.info` Provides info about dat instance
+`dat.info()` returns info about dat instance
 ```
 {"dat":"Hello","version":"6.8.4","changes":702,"name":"bionode","rows":701,"approximateSize":{"rows":"136.76 kB"}}
 ```
 
 ### DAT Diff
-`dat diff` displays the rows that have been changed
+`dat.diff()` returns the rows that have been changed
 ```
 {"change":1,"key":"schema","from":0,"to":1,"subset":"internal"}
 {"change":2,"key":"ci1fj4cqd00004buy9jabbyz0","from":0,"to":1}
@@ -43,14 +43,16 @@ The GET API allows user to access dat data store and it's attributes.
 {"change":8,"key":"ci1fj4cqj00064buyvwbnvn3k","from":0,"to":1}
 ```
 
+### DAT Rows
+`dat.rows()` returns the dat data store
 
+### DAT Csv
+`dat.csv()` returns data store in csv format
 
-
-
+### DAT Dic
+`dat.dict` returns data store in dictionary format
 
 Future Goals:
 * [Pandas I/O API](http://pandas.pydata.org/pandas-docs/stable/io.html)
-
-* [Dat and Ipython](http://ipython.org/)
 
 Looking to make using Dat and Python seamless as possible for developers. If you have any suggestions or any use cases for Dat and Python, please comment.
