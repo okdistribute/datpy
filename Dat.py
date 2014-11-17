@@ -11,4 +11,9 @@ class Dat:
         req = requests.get(self.api_base, stream=True)
         print(req.content)
 
+    def diff(self):
+        call = '{}/changes'.format(self.api_base)
+        req = requests.get(call, stream=True)
+        print(req.content)
+
 
