@@ -21,4 +21,10 @@ class Dat:
         req = requests.get(call, stream=True)
         print(req.content)
 
+    def rows(self):
+        call = '{}/rows'.format(self.api_base)
+        req = requests.get(call, stream=True)
+        print(req.content)
+
+
 
