@@ -2,13 +2,13 @@
 
 ## What is Dat?
 
-Dat is a open data project designed to make data more data more accessible:
+Dat is a open data project designed to make data more accessible:
 
 * Track incremental changes made in datasets
 * Designed to work with big data
 * streaming feature to provide faster access to datasets 
 
-Read the [docs](https://github.com/maxogden/dat/blob/master/docs/what-is-dat.md) to learn about Dat.
+Read the [docs](https://github.com/maxogden/dat/blob/master/docs/what-is-dat.md) to learn more about Dat.
 
 ## Instructions
 
@@ -17,11 +17,11 @@ Read the [docs](https://github.com/maxogden/dat/blob/master/docs/what-is-dat.md)
 
 2. Create a dat using  using `dat init` and to listen to your dat run `dat listen`
 
-3. Import Dat 'from dat import Dat' and set dat to the connection that you are listening to `dat = Dat('http://localhost:6461')`
+3. Import Dat `from dat import Dat` and set dat to the connection that you are listening to `dat = Dat('http://localhost:6461')`
 
 
 ## DAT GET
-The GET API allows user to access dat data store and it's attributes.
+The GET API allows user to access dat data store and its attributes.
 
 
 ### DAT Info
@@ -53,6 +53,18 @@ The GET API allows user to access dat data store and it's attributes.
 `dat.dict` returns data store in dictionary format
 
 Future Goals:
+* Expand Python API
+* Include examples
 * [Pandas I/O API](http://pandas.pydata.org/pandas-docs/stable/io.html)
 
-Looking to make using Dat and Python seamless as possible for developers. If you have any suggestions or any use cases for Dat and Python, please comment.
+
+### BSD Licensed
+
+Copyright (c) 2014 Portia Burton and contributors
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
