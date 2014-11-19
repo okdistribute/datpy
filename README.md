@@ -13,11 +13,11 @@ Read the [docs](https://github.com/maxogden/dat/blob/master/docs/what-is-dat.md)
 ## Instructions
 
 1. To get access to the Pythn Dat API run 
-`pip install dat`
+`pip install datPython`
 
 2. Create a dat using  using `dat init` and to listen to your dat run `dat listen`
 
-3. Import Dat `from dat import Dat` and set dat to the connection that you are listening to `dat = Dat('http://localhost:6461')`
+3. Import Dat `from datPython import Dat` and set dat to the connection that you are listening to `dat = Dat('http://localhost:6461')`
 
 
 ## DAT GET
