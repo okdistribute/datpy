@@ -42,3 +42,12 @@ class Dat:
         with open(filename, 'rb') as f:
             req = requests.post(call, data=f)
         print(req.content)
+        
+    def post_csv(self, filename):
+        call = '{}/bulk?results=true'.format(self.api_base)
+        headers = {
+        'content-type': 'text/csv',
+        }
+        with open(filename) as f:
+            req = requests.post(call, data=f, headers=headers)
+        print(req.content)
