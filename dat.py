@@ -37,7 +37,7 @@ class Dat:
         dat_dic = json.loads(req.text)
         print dat_dic
 
-    def post(self, filename):
+    def post_json(self, filename):
         call = '{}/rows'.format(self.api_base)
         with open(filename, 'rb') as f:
             req = requests.post(call, data=f)
