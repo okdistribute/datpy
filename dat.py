@@ -1,5 +1,6 @@
 import requests
 import json
+import csv
 
 class Dat:
     def __init__(self, host):
