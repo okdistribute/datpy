@@ -15,6 +15,12 @@ def rows():
     print(req.content)
     return req.headers['content-type']
 
+def diff():
+    call = port + '/api/changes'
+    req = requests.get(call, stream=True)
+    print(req.content)
+    return req.headers['content-type']
+
 class DatTest(unittest.TestCase):
 
     def test_info(self):
@@ -22,6 +28,10 @@ class DatTest(unittest.TestCase):
 
     def test_rows(self):
     	self.assertEqual(rows(),'application/json')
+
+    def test_diff(self):
+    	self.assertEqual(diff(),'application/json')
+
 
 
         
