@@ -21,6 +21,15 @@ def diff():
     print(req.content)
     return req.headers['content-type']
 
+def post_json():
+	def post_file(filename):
+    call = port + '/api/rows/post'
+    with open(filename, 'rb') as f:
+        req = requests.post(call, data=f)
+    print(req.headers)
+    return req.headers['content-type']
+
+
 class DatTest(unittest.TestCase):
 
     def test_info(self):
@@ -31,6 +40,9 @@ class DatTest(unittest.TestCase):
 
     def test_diff(self):
     	self.assertEqual(diff(),'application/json')
+
+    def test_post_json(self):
+    	self.assertEqual(test_post_json(), 'application/json')
 
 
 
