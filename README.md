@@ -43,22 +43,22 @@ Return the dat data store
 
 `dat.rows()` 
 
-## DAT GET Csv
+## DAT GET CSV
 Returns data store in csv format
 
 `dat.csv()`
 
-## DAT GET Dic
+## DAT GET Python Dictionary
 Returns data store in dictionary format
 
 `dat.dict()`
 
-## Dat POST Json
+## Dat POST JSON
 Post JSON to dat instance
 
 `dat.post_json('example.json')`
 
-## Dat POST Csv
+## Dat POST CSV
 Post CSV to dat instance
 
 `dat.post_csv('example.csv')`
