@@ -12,25 +12,32 @@ Read the [docs](https://github.com/maxogden/dat/blob/master/docs/what-is-dat.md)
 
 ## Instructions
 
-1. Clone Dat-Python repo `git clone https://github.com/pkafei/Dat-Python`
+1. Install pip 
+`python get-pip.py`
 
-2. Create a dat using  using `dat init` and to listen to your dat run `dat listen`
+2. Obtain the Python DAT package 
+`pip install datPython`
 
-3. Import Dat `from datPython import Dat` and set dat to the connection that you are listening to `dat = Dat('http://localhost:6462')`
+3. Import Dat 
+`from datPython import Dat` 
 
+4. Set dat to the connection that you are listening to 
+`dat = Dat('http://localhost:6462')`
 
-## DAT GET
-The GET API allows user to access dat data store and its attributes.
+## DAT Info
+ Return info about dat instance
+ `dat.info()`
 
-
-### DAT Info
-`dat.info()` returns info about dat instance
+### Output:
 ```
 {"dat":"Hello","version":"6.8.4","changes":702,"name":"bionode","rows":701,"approximateSize":{"rows":"136.76 kB"}}
 ```
 
 ### DAT Diff
-`dat.diff()` returns the rows that have been changed
+ Return the rows that have been changed
+ `dat.diff()`
+
+### Output: 
 ```
 {"change":1,"key":"schema","from":0,"to":1,"subset":"internal"}
 {"change":2,"key":"ci1fj4cqd00004buy9jabbyz0","from":0,"to":1}
@@ -41,21 +48,25 @@ The GET API allows user to access dat data store and its attributes.
 {"change":7,"key":"ci1fj4cqi00054buyzmivu7j7","from":0,"to":1}
 {"change":8,"key":"ci1fj4cqj00064buyvwbnvn3k","from":0,"to":1}
 ```
+## DAT GET Rows
+Return the dat data store
+`dat.rows()` 
 
-### DAT Rows
-`dat.rows()` returns the dat data store
+## DAT GET Csv
+Returns data store in csv format
+`dat.csv()`
 
-### DAT Csv
-`dat.csv()` returns data store in csv format
+## DAT GET Dic
+Returns data store in dictionary format
+`dat.dict()`
 
-### DAT Dic
-`dat.dict` returns data store in dictionary format
+## Dat POST Json
+Post JSON to dat instance
+`dat.post_json('example.json')`
 
-Future Goals:
-* Expand Python API
-* Include examples
-* [Pandas I/O API](http://pandas.pydata.org/pandas-docs/stable/io.html)
-
+## Dat POST Csv
+Post CSV to dat instance
+`dat.post_csv('example.csv')`
 
 ### BSD Licensed
 
