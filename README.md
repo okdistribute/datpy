@@ -13,19 +13,24 @@ Read the [docs](https://github.com/maxogden/dat/blob/master/docs/what-is-dat.md)
 ## Instructions
 
 1. Install pip 
+
 `python get-pip.py`
 
 2. Obtain the Python DAT package 
+
 `pip install datPython`
 
 3. Import Dat 
+
 `from datPython import Dat` 
 
-4. Set dat to the connection that you are listening to 
+4. Set dat to the connection that you are listening to
+
 `dat = Dat('http://localhost:6462')`
 
 ## DAT Info
  Return info about dat instance
+
  `dat.info()`
 
 ### Output:
@@ -35,6 +40,7 @@ Read the [docs](https://github.com/maxogden/dat/blob/master/docs/what-is-dat.md)
 
 ### DAT Diff
  Return the rows that have been changed
+ 
  `dat.diff()`
 
 ### Output: 
