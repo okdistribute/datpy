@@ -37,7 +37,7 @@ class Dat:
         print(req.content)
         return req.content
 
-    def dic(self):
+    def dict(self):
         call = '{}/rows'.format(self.api_base)
         req = requests.get(call, stream=True)
         dat_dic = json.loads(req.text)
