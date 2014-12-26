@@ -26,7 +26,7 @@ Read the [docs](https://github.com/maxogden/dat/blob/master/docs/what-is-dat.md)
 
 4. Set dat to the connection that you are listening to
 
-`dat = Dat('http://localhost:6462')`
+`dat = Dat('http://localhost:6461')`
 
 ## DAT Info
  Return info about dat instance
