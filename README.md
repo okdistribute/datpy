@@ -50,23 +50,30 @@ Read the [docs](https://github.com/maxogden/dat/blob/master/docs/what-is-dat.md)
 ```
 ## DAT GET Rows
 Return the dat data store
+
 `dat.rows()` 
 
 ## DAT GET Csv
 Returns data store in csv format
+
 `dat.csv()`
 
 ## DAT GET Dic
 Returns data store in dictionary format
+
 `dat.dict()`
 
 ## Dat POST Json
 Post JSON to dat instance
+
 `dat.post_json('example.json')`
 
 ## Dat POST Csv
 Post CSV to dat instance
+
 `dat.post_csv('example.csv')`
+
+Python in Dat Example: http://nbviewer.ipython.org/github/pkafei/Dat-Python/blob/master/examples/Using%20Python%20with%20Dat.ipynb
 
 ### BSD Licensed
 
