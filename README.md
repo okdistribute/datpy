@@ -72,34 +72,6 @@ Returns the data store in csv format
 'vote_share,wee,woo,key,version\n51.33,,,1,1\n,foo,,ci4b027fq0000hyxm4919va4t,1\n,foo,,ci4b027gv0001hyxm1oewmppr,1\n,foo,,ci4b027ho0002hyxm41wpaje6,1\n,,boop,ci4b027hw0003hyxme100j1kt,1\n,foo,,ci4b03qh00004hyxmlfddel23,1\n,foo,,ci4b03qhn0005hyxm2893j8ty,1\n,foo,,ci4b03qhz0006hyxmewff'
 ```
 
-#### Dat#api(resource, method, data=None, opts=None, stream=False)
-Call the api.
-
-    Parameters:
-    -----------
-
-    resource: string
-      the api resource to access. (e.g. 'rows', 'csv', 'session')
-    method: string
-      the http method to use. (e.g., 'GET', 'PUT')
-    data: object (optional)
-      optional arguments to be sent into raw body data (e.g., on post)
-    opts: object (optional)
-      optional arguments to be entered into query parameters
-    stream: boolean (optional, default False)
-      whether to stream the response
-
-````python
-
-> dat.api('csv', 'GET')
-'vote_share,wee,woo,key,version\n51.33,,,1,1\n,foo,,ci4b027fq0000hyxm4919va4t,1\n,foo,,ci4b027gv0001hyxm1oewmppr,1\n,foo,,ci4b027ho0002hyxm41wpaje6,1\n,,boop,ci4b027hw0003hyxme100j1kt,1\n,foo,,ci4b03qh00004hyxmlfddel23,1\n,foo,,ci4b03qhn0005hyxm2893j8ty,1\n,foo,,ci4b03qhz0006hyxmewff'
-
-
-#### Dat#json
-Call the api and return the results as json.
-> dat.json('session', 'GET')
-{'loggedOut': True}
-
 #### Dat#import(filename, type='json')
 Import data into the dat
 
@@ -107,6 +79,41 @@ Import data into the dat
 `dat.import('example.csv', 'csv')`
 
 Python in Dat Example: http://nbviewer.ipython.org/github/pkafei/Dat-Python/blob/master/examples/Using%20Python%20with%20Dat.ipynb
+
+
+#### Dat#api(resource, method, data=None, opts=None, stream=False)
+Call the api.
+
+`resource`: string
+
+  the api resource to access. (e.g. 'rows', 'csv', 'session')
+
+`method`: string
+
+  the http method to use. (e.g., 'GET', 'PUT')
+
+`data`: object (optional)
+
+  arguments to be sent into raw body data (e.g., on post)
+
+`opts`: object (optional)
+
+  arguments to be entered into query parameters
+
+`stream`: boolean (optional, default False)
+
+  whether to stream the response
+
+````python
+
+> dat.api('csv', 'GET')
+'vote_share,wee,woo,key,version\n51.33,,,1,1\n,foo,,ci4b027fq0000hyxm4919va4t,1\n,foo,,ci4b027gv0001hyxm1oewmppr,1\n,foo,,ci4b027ho0002hyxm41wpaje6,1\n,,boop,ci4b027hw0003hyxme100j1kt,1\n,foo,,ci4b03qh00004hyxmlfddel23,1\n,foo,,ci4b03qhn0005hyxm2893j8ty,1\n,foo,,ci4b03qhz0006hyxmewff'
+```
+
+#### Dat#json
+Call the api and return the results as json.
+> dat.json('session', 'GET')
+{'loggedOut': True}
 
 ### BSD Licensed
 
