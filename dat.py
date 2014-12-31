@@ -14,7 +14,7 @@ class Dat:
     self.api_base = '{}/api'.format(self.host)
     self.auth = (username, password)
 
-  def _call(self, resource, method, data=None, opts=None, stream=False):
+  def api(self, resource, method, data=None, opts=None, stream=False):
     """
     Calls the dat with the given api specification
 
@@ -60,21 +60,25 @@ class Dat:
 
     prepped = s.prepare_request(req)
     resp = s.send(prepped, stream=stream)
-    return json.loads(resp.content)
+    return resp.content
+
+  def json(self, *args, **kwargs):
+    resp = self.api(*args, **kwargs)
+    return json.loads(resp)
 
   def info(self):
-    return self._call('', 'GET')
+    return self.json('', 'GET')
 
   def changes(self):
-    resp = self._call('changes', 'GET')
+    resp = self.json('changes', 'GET')
     return resp['rows']
 
   def session(self):
-    return self._call('session', 'GET')
+    return self.json('session', 'GET')
 
   def csv(self):
-    return self._call('csv', 'GET')
+    return self.api('csv', 'GET')
 
   def rows(self):
-    resp = self._call('rows', 'GET')
+    resp = self.json('rows', 'GET')
     return resp['rows']
