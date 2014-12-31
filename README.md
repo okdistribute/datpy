@@ -6,27 +6,25 @@ Dat is a open data project designed to make data more accessible:
 
 * Track incremental changes made in datasets
 * Designed to work with big data
-* streaming feature to provide faster access to datasets 
+* streaming feature to provide faster access to datasets
 
 Read the [docs](https://github.com/maxogden/dat/blob/master/docs/what-is-dat.md) to learn more about Dat.
 
 ## Instructions
 
-1. Install pip 
+  1. Install pip
 
-`python get-pip.py`
+  2. Obtain the Python DAT package
 
-2. Obtain the Python DAT package 
+    `pip install datPython`
 
-`pip install datPython`
+  3. Import Dat
 
-3. Import Dat 
+    `from datPython import Dat`
 
-`from datPython import Dat` 
+  4. Set dat to the connection that you are listening to
 
-4. Set dat to the connection that you are listening to
-
-`dat = Dat('http://localhost:6461')`
+    `dat = Dat('http://localhost:6461')`
 
 ## DAT Info
  Return info about dat instance
