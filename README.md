@@ -26,23 +26,26 @@ Read the [docs](https://github.com/maxogden/dat/blob/master/docs/what-is-dat.md)
 
     `dat = Dat('http://localhost:6461')`
 
-## DAT Info
+## API
+
+*Dat#info()*
+
  Return info about dat instance
 
  `dat.info()`
 
-### DAT Diff
+*Dat#changes()*
  Return the rows that have been changed
- 
- `dat.diff()`
+
+ `dat.changes()`
 
 ## DAT GET Rows
 Return the dat data store
 
-`dat.rows()` 
+`dat.rows()`
 
 ## DAT GET CSV
-Returns data store in csv format
+Returns the data store in csv format
 
 `dat.csv()`
 

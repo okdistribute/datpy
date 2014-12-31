@@ -65,8 +65,9 @@ class Dat:
   def info(self):
     return self._call('', 'GET')
 
-  def diff(self):
-    return self._call('changes', 'GET')
+  def changes(self):
+    resp = self._call('changes', 'GET')
+    return resp['rows']
 
   def session(self):
     return self._call('session', 'GET')
