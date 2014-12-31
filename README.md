@@ -1,14 +1,16 @@
 # DAT Python API
 
+This is a REST api client in python for [Dat](https://dat-data.com).
+
 ## What is Dat?
 
 Dat is a open data project designed to make data more accessible:
 
 * Track incremental changes made in datasets
 * Designed to work with big data
-* streaming feature to provide faster access to datasets
+* Streaming feature to provide
 
-Read the [docs](https://github.com/maxogden/dat/blob/master/docs/what-is-dat.md) to learn more about Dat.
+Read the [docs](https://github.com/maxogden/dat) to learn more about Dat.
 
 ## Instructions
 
@@ -28,41 +30,81 @@ Read the [docs](https://github.com/maxogden/dat/blob/master/docs/what-is-dat.md)
 
 ## API
 
-*Dat#info()*
+
+#### Dat#info
 
  Return info about dat instance
 
  `dat.info()`
 
-*Dat#changes()*
+#### Dat#changes
+
  Return the rows that have been changed
 
  `dat.changes()`
 
-## DAT GET Rows
-Return the dat data store
+#### Dat#rows
 
-`dat.rows()`
+  Get the rows in the dat. This returns a list of dictionaries, where each dictionary is the json representation of that row.
 
-## DAT GET CSV
+  ```python
+> dat.rows()
+[
+ {'key': 'ci4b027gv0001hyxm1oewmppr',
+  'version': 1,
+  'vote_share': 51.33,
+  'state': 'CA',
+  'republican': True},
+ {'key': 'ci4b027fq0000hyxm4919va4t',
+  'version': 2,
+  'vote_share': 49.53,
+  'state': 'DE',
+  'republican': False},
+  ...
+]
+  ```
+
+#### Dat#csv
 Returns the data store in csv format
 
-`dat.csv()`
+```python
+> dat.csv()
+'vote_share,wee,woo,key,version\n51.33,,,1,1\n,foo,,ci4b027fq0000hyxm4919va4t,1\n,foo,,ci4b027gv0001hyxm1oewmppr,1\n,foo,,ci4b027ho0002hyxm41wpaje6,1\n,,boop,ci4b027hw0003hyxme100j1kt,1\n,foo,,ci4b03qh00004hyxmlfddel23,1\n,foo,,ci4b03qhn0005hyxm2893j8ty,1\n,foo,,ci4b03qhz0006hyxmewff'
+```
 
-## DAT GET Python Dictionary
-Returns data store in dictionary format
+#### Dat#api(resource, method, data=None, opts=None, stream=False)
+Call the api.
 
-`dat.dict()`
+    Parameters:
+    -----------
 
-## Dat POST JSON
-Post JSON to dat instance
+    resource: string
+      the api resource to access. (e.g. 'rows', 'csv', 'session')
+    method: string
+      the http method to use. (e.g., 'GET', 'PUT')
+    data: object (optional)
+      optional arguments to be sent into raw body data (e.g., on post)
+    opts: object (optional)
+      optional arguments to be entered into query parameters
+    stream: boolean (optional, default False)
+      whether to stream the response
 
-`dat.post_json('example.json')`
+````python
 
-## Dat POST CSV
-Post CSV to dat instance
+> dat.api('csv', 'GET')
+'vote_share,wee,woo,key,version\n51.33,,,1,1\n,foo,,ci4b027fq0000hyxm4919va4t,1\n,foo,,ci4b027gv0001hyxm1oewmppr,1\n,foo,,ci4b027ho0002hyxm41wpaje6,1\n,,boop,ci4b027hw0003hyxme100j1kt,1\n,foo,,ci4b03qh00004hyxmlfddel23,1\n,foo,,ci4b03qhn0005hyxm2893j8ty,1\n,foo,,ci4b03qhz0006hyxmewff'
 
-`dat.post_csv('example.csv')`
+
+#### Dat#json
+Call the api and return the results as json.
+> dat.json('session', 'GET')
+{'loggedOut': True}
+
+#### Dat#import(filename, type='json')
+Import data into the dat
+
+`dat.import('example.json', 'json')`
+`dat.import('example.csv', 'csv')`
 
 Python in Dat Example: http://nbviewer.ipython.org/github/pkafei/Dat-Python/blob/master/examples/Using%20Python%20with%20Dat.ipynb
 
