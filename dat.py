@@ -60,8 +60,7 @@ class Dat:
 
     prepped = s.prepare_request(req)
     resp = s.send(prepped, stream=stream)
-
-    return resp.content
+    return json.loads(resp.content)
 
   def info(self):
     return self._call('', 'GET')
@@ -76,6 +75,5 @@ class Dat:
     return self._call('csv', 'GET')
 
   def rows(self):
-    req = self._call('rows', 'GET')
-    output = json.loads(req)
-    return output['rows']
+    resp = self._call('rows', 'GET')
+    return resp['rows']

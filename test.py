@@ -1,34 +1,17 @@
 import unittest
-import requests
 
-port = 'http://localhost:6461'
+from dat import Dat
 
-def info():
-    call = port + '/api'
-    req = requests.get(call, stream=True)
-    return req.status_code
-
-def rows():
-    call = port + '/api/rows'
-    req = requests.get(call, stream=True)
-    return req.headers['content-type']
-
-def diff():
-    call = port + '/api/changes'
-    req = requests.get(call, stream=True)
-    return req.headers['content-type']
-
+host = 'http://localhost:6461'
 
 class DatTest(unittest.TestCase):
 
+    def setUp(self):
+        self.dat = Dat(host)
+
     def test_info(self):
-    	self.assertEqual(info(), 200)
-
-    def test_rows(self):
-    	self.assertEqual(rows(),'application/json')
-
-    def test_diff(self):
-    	self.assertEqual(diff(),'application/json')
+        res = self.dat.info()
+    	self.assertEqual(res['dat'], 'Hello')
 
 if __name__ == '__main__':
     unittest.main()
