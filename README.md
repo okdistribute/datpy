@@ -112,12 +112,14 @@ Call the api.
 
 #### Dat#json
 Call the api and return the results as json.
+```python
 > dat.json('session', 'GET')
 {'loggedOut': True}
+```
 
-### BSD Licensed
+# BSD Licensed
 
-Copyright (c) 2014 Portia Burton and contributors
+Copyright (c) 2014 Portia Burton and contributors.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
