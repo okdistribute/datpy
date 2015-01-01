@@ -1,35 +1,59 @@
 import unittest
 
-from dat import Dat
+from dat import Dat, DatServerError
 
 host = 'http://localhost:6461'
 
 class DatTest(unittest.TestCase):
-    """
-    Basic tests assuming the dat is already set up and listening on port 6461.
+  """
+  Basic tests assuming the dat is already set up and listening on port 6461.
 
-    For more advanced testing, we will want to (at some point) instantiate the
-    Dat ourselves.
-    """
+  For more advanced testing, we will want to (at some point) instantiate the
+  Dat ourselves.
+  """
 
-    def setUp(self):
-        self.dat = Dat(host)
+  def setUp(self):
+    self.dat = Dat(host)
 
-    def test_info(self):
-        res = self.dat.info()
-    	self.assertEqual(res['dat'], 'Hello')
+  def test_info(self):
+    res = self.dat.info()
+    self.assertEqual(res['dat'], 'Hello')
 
-    def test_changes(self):
-        res = self.dat.changes()
-        self.assertEqual(type(res), list)
+  def test_changes(self):
+    res = self.dat.changes()
+    self.assertEqual(type(res), list)
 
-    def test_session(self):
-        res = self.dat.session()
-        self.assertEqual(res['loggedOut'], True)
+  def test_session(self):
+    res = self.dat.session()
+    self.assertEqual(res['loggedOut'], True)
 
-    def test_csv(self):
-        res = self.dat.csv()
+  def test_csv(self):
+    res = self.dat.csv()
+    self.assertEqual(type(res), str)
+
+  def test_put(self):
+    data = {
+      "hello": "world"
+    }
+    res = self.dat.put(data)
+    self.assertEquals(res['hello'], data['hello'])
+    self.assertTrue('key' in res)
+
+    ## raises conflict
+    data = {
+      "key": res['key'],
+      "hello": "world"
+    }
+    res = self.dat.put(data)
+    self.assertRaises(DatServerError, self.dat.put, data)
+
+  def test_rows(self):
+    res = self.dat.rows()
+    self.assertEquals(type(res), list)
+
+    res = self.dat.rows(opts={"limit": 1})
+    self.assertEquals
 
 
 if __name__ == '__main__':
-    unittest.main()
+  unittest.main()

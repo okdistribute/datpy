@@ -82,12 +82,15 @@ class Dat:
         params[param] = opts[param]
 
     headers = {}
-    res_type = opts.get('type')
-    if res_type:
-        if res_type == 'csv':
-            headers['content-type'] = 'text/csv'
-        elif res_type == 'json':
-            headers['content-type'] = 'application/json'
+    data_format = opts.get('type')
+    if not data_format:
+      data_format = 'json' if type(data) == dict else 'csv'
+
+    if data_format == 'csv':
+        headers['content-type'] = 'text/csv'
+    elif data_format == 'json':
+        headers['content-type'] = 'application/json'
+        data = json.dumps(data)
 
     req = Request(method, url, params=params, data=data, headers=headers)
 
@@ -97,7 +100,9 @@ class Dat:
 
     prepped = s.prepare_request(req)
     resp = s.send(prepped, stream=stream)
-    return resp.content
+    if resp.status_code == 200 or resp.status_code == 201:
+      return resp.content
+    raise DatServerError(resp)
 
   def json(self, *args, **kwargs):
     resp = self.api(*args, **kwargs)
@@ -106,8 +111,8 @@ class Dat:
   def info(self):
     return self.json('', 'GET')
 
-  def changes(self):
-    resp = self.json('changes', 'GET')
+  def changes(self, opts=None):
+    resp = self.json('changes', 'GET', opts=opts)
     return resp['rows']
 
   def session(self):
@@ -116,6 +121,11 @@ class Dat:
   def csv(self):
     return self.api('csv', 'GET')
 
-  def rows(self):
-    resp = self.json('rows', 'GET')
+  def rows(self, opts=None):
+    resp = self.json('rows', 'GET', opts=opts)
     return resp['rows']
+
+  def put(self, data, opts=None):
+    return self.json('rows', 'POST', data=data, opts=opts)
+
+
