@@ -2,6 +2,7 @@ from requests import Request, Session
 import json
 import csv
 import subprocess
+import time
 
 VALID_GET_PARAMS = ['limit', 'start', 'gt', 'lt', 'gte', 'lte', \
     'reverse', 'version', 'style', 'since', 'tail', 'live', 'type']
@@ -24,7 +25,6 @@ class LocalDat:
       subprocess.call(["cd", self.location])
       self.location = location
 
-
   def call(self, args, shell=True):
     return subprocess.call(args, shell=shell)
 
@@ -32,7 +32,12 @@ class LocalDat:
     return self.call(["dat init --no-prompt"])
 
   def listen(self):
-    self.server = subprocess.Popen("dat listen", shell=True)
+    p = subprocess.Popen("dat listen", shell=True)
+    while p.poll == None:
+      time.sleep(.5)
+      p.poll()
+
+    self.server = p
     return self.server
 
   def close(self):
@@ -40,7 +45,6 @@ class LocalDat:
 
   def clean(self):
     return self.call(["dat clean"])
-
 
 
 class Dat:

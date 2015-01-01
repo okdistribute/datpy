@@ -1,6 +1,6 @@
 import unittest
 
-from dat import Dat, DatServerError
+from dat import LocalDat, Dat, DatServerError
 
 host = 'http://localhost:6461'
 
@@ -12,8 +12,12 @@ class DatTest(unittest.TestCase):
   Dat ourselves.
   """
 
-  def setUp(self):
-    self.dat = Dat(host)
+  @classmethod
+  def setUpClass(cls):
+    cls.local = LocalDat()
+    cls.local.init()
+    cls.local.listen()
+    cls.dat = Dat(host)
 
   def test_info(self):
     res = self.dat.info()
@@ -44,16 +48,17 @@ class DatTest(unittest.TestCase):
       "key": res['key'],
       "hello": "world"
     }
-    res = self.dat.put(data)
     self.assertRaises(DatServerError, self.dat.put, data)
 
   def test_rows(self):
     res = self.dat.rows()
     self.assertEquals(type(res), list)
-
     res = self.dat.rows(opts={"limit": 1})
-    self.assertEquals
 
+  @classmethod
+  def tearDownClass(cls):
+    cls.local.close()
+    cls.local.clean()
 
 if __name__ == '__main__':
   unittest.main()
