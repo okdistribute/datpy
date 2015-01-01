@@ -1,9 +1,46 @@
 from requests import Request, Session
 import json
 import csv
+import subprocess
 
 VALID_GET_PARAMS = ['limit', 'start', 'gt', 'lt', 'gte', 'lte', \
-    'reverse', 'version', 'style', 'since', 'tail', 'live']
+    'reverse', 'version', 'style', 'since', 'tail', 'live', 'type']
+
+class DatServerError(Exception):
+  def __init__(self, resp):
+    self.resp = resp
+    self.resp_content = json.loads(resp.content)
+
+    if self.resp_content.get('conflict'):
+      message = self.resp_content['error']
+    else:
+      message = "Unknown server error. Received status code %s" % (self.status)
+    super(DatServerError, self).__init__(message)
+
+class LocalDat:
+
+  def __init__(self, location=None):
+    if location:
+      subprocess.call(["cd", self.location])
+      self.location = location
+
+
+  def call(self, args, shell=True):
+    return subprocess.call(args, shell=shell)
+
+  def init(self):
+    return self.call(["dat init --no-prompt"])
+
+  def listen(self):
+    self.server = subprocess.Popen("dat listen", shell=True)
+    return self.server
+
+  def close(self):
+    return subprocess.Popen.terminate(self.server)
+
+  def clean(self):
+    return self.call(["dat clean"])
+
 
 
 class Dat:
