@@ -108,6 +108,10 @@ Call the api.
 
 > dat.api('csv', 'GET')
 'vote_share,wee,woo,key,version\n51.33,,,1,1\n,foo,,ci4b027fq0000hyxm4919va4t,1\n,foo,,ci4b027gv0001hyxm1oewmppr,1\n,foo,,ci4b027ho0002hyxm41wpaje6,1\n,,boop,ci4b027hw0003hyxme100j1kt,1\n,foo,,ci4b03qh00004hyxmlfddel23,1\n,foo,,ci4b03qhn0005hyxm2893j8ty,1\n,foo,,ci4b03qhz0006hyxmewff'
+
+```
+
+#### Dat#json
 ```
 
 #### Dat#json
@@ -115,6 +119,20 @@ Call the api and return the results as json.
 ```python
 > dat.json('session', 'GET')
 {'loggedOut': True}
+
+
+> data = {
+  "vote_share": 49.59,
+  "republican": False
+}
+> dat.json('rows', 'POST', data=json.dumps(data), opts={"format": "json"})
+ {'key': 'ci4b027fq0000hyxm4919va4t',
+  'version': 2,
+  'vote_share': 49.53,
+  'state': 'DE',
+  'republican': False},
+
+
 ```
 
 # BSD Licensed
