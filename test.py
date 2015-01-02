@@ -32,16 +32,29 @@ class DatTest(unittest.TestCase):
     self.assertEqual(res['loggedOut'], True)
 
   def test_csv(self):
-    res = self.dat.csv()
+    res = self.dat.to_csv()
     self.assertEqual(type(res), str)
+
+  def test_put_file(self):
+    with open('examples/contracts.csv') as f:
+      res = self.dat.put(f)
+      self.assertEquals('contractNo' in res.keys())
 
   def test_put(self):
     data = {
       "hello": "world"
     }
     res = self.dat.put(data)
+
     self.assertEquals(res['hello'], data['hello'])
     self.assertTrue('key' in res)
+
+
+    data = [{"one": "world"},{"hello": "mars"}]
+    res = self.dat.put(data)
+    self.assertEquals(res['hello'], data['hello'])
+    self.assertTrue('key' in res)
+
 
     ## raises conflict
     data = {
