@@ -2,15 +2,15 @@
 
 This is a client in python for [Dat](https://dat-data.com). There are functions to interact with the REST api as well as local hooks. It integrates easily with [pandas](http://pandas.pydata.org).
 
-Goodbye, pickles and csv files.
+Hello, collaboration.
 
 ## What is Dat?
 
 Dat is a open data project designed to make data more accessible:
 
 * Track incremental changes made in datasets
-* Designed to work with big data
-* Streaming feature to provide
+* Provide a REST api to share your data
+* Designed to work with all data: big and small
 
 Read the [docs](https://github.com/maxogden/dat) to learn more about Dat.
 
@@ -32,7 +32,9 @@ Read the [docs](https://github.com/maxogden/dat) to learn more about Dat.
 
 ## Usage
 
-Read a dat into a pandas object
+This is a new library and it needs work! Please don't hesitate to send a pull request or to open an issue if you find something wrong or broken. It's probably because we messed up!
+
+Here's a simple example of how to read a dat's data into a pandas object, and then update the dat accordingly after editing the values.
 
 ```python
 from datPython import Dat
@@ -48,26 +50,6 @@ dat.put_pandas(df)
 
 ```
 
-## Testing
-
-Install `nosetests` for the best testing environment. If you don't have `pandas` installed, it will skip the pandas tests.
-
-```bash
-nosetests
-```
-
-To run just one test
-
-```bash
-nosetests test.py:SimpleTest.test_rows
-```
-
-To run the entire suite without `nosetests`:
-
-```bash
-python test.py
-```
-
 ## API
 
 
@@ -75,13 +57,45 @@ python test.py
 
  Return info about dat instance
 
- `dat.info()`
+ ```python
+ > dat.info()
+ {
+  dat: "Hello",
+  version: "6.9.4",
+  changes: 49,
+  name: "dat-test",
+  description: "i am a description",
+  publisher: "karissa",
+  rows: 44,
+  approximateSize: {
+    rows: "5.93 kB"
+  }
+}
+```
 
 #### Dat#changes
 
  Return the rows that have been changed
 
- `dat.changes()`
+ ```python
+ > dat.changes()
+[
+  {
+    change: 1,
+    key: "schema",
+    from: 0,
+    to: 1,
+    subset: "internal"
+  },
+  {
+    change: 2,
+    key: "ci4etk0wq0000tjxmj7ii2wx6",
+    from: 0,
+    to: 1
+  },
+  etc...
+]
+ ```
 
 #### Dat#rows
 
@@ -101,6 +115,20 @@ python test.py
   'state': 'DE',
   'republican': False},
   ...
+]
+  ```
+
+  You can pass in any options supported by Dat's [REST api](https://github.com/maxogden/dat/blob/master/docs/rest-api.md)
+
+  For example, ```opts={'limit': 1}``` expands to ```http://<host>/api/rows?limit=1
+  ```python
+> dat.rows(opts={"limit": 1})
+[
+ {'key': 'ci4b027gv0001hyxm1oewmppr',
+  'version': 1,
+  'vote_share': 51.33,
+  'state': 'CA',
+  'republican': True},
 ]
   ```
 
@@ -172,6 +200,32 @@ Call the api and return the results as json.
 
 
 ```
+
+# Developers
+
+This is a new library and it needs work! Please don't hesitate to send a pull request.
+
+## Testing
+
+Install `nosetests` for the best testing environment. If you don't have `pandas` installed, it will skip the pandas tests.
+
+```bash
+nosetests
+```
+
+To run just one test
+
+```bash
+nosetests test.py:SimpleTest.test_rows
+```
+
+To run the entire suite without `nosetests`:
+
+```bash
+python test.py
+```
+
+
 # BSD Licensed
 
 Copyright (c) 2014 Portia Burton and contributors.
