@@ -63,7 +63,7 @@ class Dat:
     self.host = host.strip('/')
     self.api_base = '{}/api'.format(self.host)
     self.auth = (username, password)
-    print self.info()
+    self.info()
 
   def api(self, resource, method, data=None, opts=None, stream=False):
     """
