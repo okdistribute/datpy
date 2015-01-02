@@ -1,6 +1,8 @@
 # DAT Python API
 
-This is a REST api client in python for [Dat](https://dat-data.com).
+This is a client in python for [Dat](https://dat-data.com). There are functions to interact with the REST api as well as local hooks. It integrates easily with [pandas](http://pandas.pydata.org).
+
+Goodbye, pickles and csv files.
 
 ## What is Dat?
 
