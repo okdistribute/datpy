@@ -102,7 +102,7 @@ class TestPandas(DatTest):
 
       self.assertEquals(df.shape, (770, 13))
 
-      res = self.dat.put_pandas_dataframe(df)
+      res = self.dat.put_pandas(df)
       print res.status_code
 
 

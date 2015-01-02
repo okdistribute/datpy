@@ -157,7 +157,7 @@ class Dat:
       data = json.dumps(data)
       return self.json('rows', 'POST', data=data, opts=opts)
     elif pandas and type(data) == pandas.core.frame.DataFrame:
-      return self.put_pandas_dataframe(data, opts)
+      return self.put_pandas(data, opts)
 
   def put_bulk(self, file_or_buffer, format='json', opts=None):
     if opts is None:
@@ -167,7 +167,7 @@ class Dat:
 
     return self.api('bulk', 'POST', data=file_or_buffer, opts=opts, stream=True)
 
-  def put_pandas_dataframe(self, df, opts=None):
+  def put_pandas(self, df, opts=None):
     """
     Parameters
     ----------

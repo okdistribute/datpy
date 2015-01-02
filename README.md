@@ -28,6 +28,25 @@ Read the [docs](https://github.com/maxogden/dat) to learn more about Dat.
 
     `dat = Dat('http://localhost:6461')`
 
+## Usage
+
+Read a dat into a pandas object
+
+```python
+from datPython import Dat
+
+dat = Dat('http://localhost:6461')
+
+df = dat.to_pandas()
+
+# ... do some stuff to the pandas dataframe ...
+
+dat.put_pandas(df)
+
+
+```
+
+
 ## API
 
 
