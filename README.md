@@ -14,21 +14,13 @@ Dat is a open data project designed to make data more accessible:
 
 Read the [docs](https://github.com/maxogden/dat) to learn more about Dat.
 
-## Instructions
+## Installation
 
   1. Install pip
 
   2. Obtain the Python DAT package
 
     `pip install datPython`
-
-  3. Import Dat
-
-    `from datPython import Dat`
-
-  4. Set dat to the connection that you are listening to
-
-    `dat = Dat('http://localhost:6461')`
 
 ## Usage
 
@@ -37,9 +29,9 @@ This is a new library and it needs work! Please don't hesitate to send a pull re
 Here's a simple example of how to read a dat's data into a pandas object, and then update the dat accordingly after editing the values.
 
 ```python
-from datPython import Dat
+from datPython import DatAPI
 
-dat = Dat('http://localhost:6461')
+dat = DatAPI('http://localhost:6461')
 
 df = dat.to_pandas()
 
@@ -164,6 +156,24 @@ Returns the data store into a pandas dataframe
 etc...
 ```
 
+#### DatAPI#put_pandas
+
+Sends a dataframe to a dat using bulk ndjson. This is still experimental.
+
+```python
+> df = dat.to_pandas()
+
+# clean a column
+> df['columnName'] = clean_up_column(df['columnName'])
+
+# add a column
+> df['anotherColumn'] = pd.Series([1, 2, 3, 4])
+
+> dat.put_pandas(df)
+
+```
+
+You will then see the changes reflected. All of the affected rows will be bumped to the next version.
 
 #### DatAPI#api(resource, method, data=None, opts=None, stream=False)
 Call the api.
@@ -220,6 +230,18 @@ Call the api and return the results as json.
 # Developers
 
 This is a new library and it needs work! Please don't hesitate to send a pull request.
+
+## Contributing
+
+First, create a fork, then install the requirements. Make your change and open a pull request!
+
+```bash
+$ git clone http://github.com/<your-fork>/Dat-Python
+$ pip install -r requirements.txt
+$ git commit -am "BUG: there was a bug that had this problem"
+$ git push origin master
+ ... open pull request!
+```
 
 ## Testing
 
