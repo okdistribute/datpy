@@ -1,6 +1,9 @@
 import unittest
 import json
-import pandas
+try:
+  import pandas
+except:
+  pandas = False
 
 from dat import LocalDat, Dat, DatServerError
 
@@ -22,6 +25,13 @@ class DatTest(unittest.TestCase):
     cls.local.listen()
     cls.dat = Dat(host)
 
+  @classmethod
+  def tearDownClass(cls):
+    cls.local.close()
+    cls.local.clean()
+
+class SimpleTest(DatTest):
+
   def test_info(self):
     res = self.dat.info()
     self.assertEqual(res['dat'], 'Hello')
@@ -40,7 +50,7 @@ class DatTest(unittest.TestCase):
 
   def test_put(self):
     data = '{"one": "world"}\n{"hello": "mars"}'
-    res = self.dat.bulk(data)
+    res = self.dat.put_bulk(data)
     self.assertEquals(res.status_code, 200)
 
     data = {
@@ -58,29 +68,44 @@ class DatTest(unittest.TestCase):
     }
     self.assertRaises(DatServerError, self.dat.put, data)
 
-  def test_bulk(self):
+
+class TestContracts(DatTest):
+
+  def test_put_bulk(self):
     with open('examples/contracts.csv') as fp:
       self.assertTrue(len(self.dat.changes()) < 10)
-      res = self.dat.bulk(fp, format='csv')
+      res = self.dat.put_bulk(fp, format='csv')
       self.assertTrue(len(self.dat.changes()) > 700)
 
   def test_rows(self):
     res = self.dat.rows()
     self.assertEquals(type(res), list)
-    res = self.dat.rows(opts={"limit": 1})
 
-  def test_to_pandas(self):
+    res = self.dat.rows(opts={"limit": 1})
+    self.assertEquals(len(res), 1)
+
+@unittest.skipIf(pandas is False, "skipping pandas tests")
+class TestPandas(DatTest):
+
+  def test_pandas(self):
     with open('examples/contracts.csv') as fp:
-      res = self.dat.bulk(fp, format='csv')
+      res = self.dat.put_bulk(fp, format='csv')
       df = self.dat.to_pandas()
       self.assertEquals(type(df), pandas.core.frame.DataFrame)
-      self.assertEquals(df.shape, (1543, 14))
+      self.assertEquals(df.shape, (770, 12))
+
+      # clean column, turn into float
+      df['amtSpent'] = df['amtSpent'].str.replace(r'[$,]', '').astype('float')
+
+      # create ranked column.
+      df['amtSpentRank'] = df['amtSpent'].rank()
+
+      self.assertEquals(df.shape, (770, 13))
+
+      res = self.dat.put_pandas_dataframe(df)
+      print res.status_code
 
 
-  @classmethod
-  def tearDownClass(cls):
-    cls.local.close()
-    cls.local.clean()
 
 if __name__ == '__main__':
   unittest.main()

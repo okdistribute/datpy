@@ -79,7 +79,7 @@ class Dat:
     data: object (optional)
       optional arguments to be sent into raw body data (e.g., on post)
     opts: object (optional)
-      optional arguments to be entered into query parameters
+      optional arguments to be sent as query parameters to the endpoint
     stream: boolean (optional, default False)
       whether to stream the response
     """
@@ -141,7 +141,10 @@ class Dat:
 
     Parameters
     -----------
-    data: generator, file, or dictionary
+    data: dictionary or pandas data frame
+    format: string
+    opts: object
+      options to pass as GET parameters to the endpoint
 
     """
     if opts is None:
@@ -156,7 +159,7 @@ class Dat:
     elif pandas and type(data) == pandas.core.frame.DataFrame:
       return self.put_pandas_dataframe(data, opts)
 
-  def bulk(self, file_or_buffer, format='json', opts=None):
+  def put_bulk(self, file_or_buffer, format='json', opts=None):
     if opts is None:
       opts = {}
 
@@ -165,6 +168,13 @@ class Dat:
     return self.api('bulk', 'POST', data=file_or_buffer, opts=opts, stream=True)
 
   def put_pandas_dataframe(self, df, opts=None):
+    """
+    Parameters
+    ----------
+    df: pandas dataframe
+    opts: object
+      options to pass as GET parameters to the endpoint
+    """
     if opts is None:
       opts = {}
 
@@ -176,15 +186,19 @@ class Dat:
       while row:
         try:
           row = next(generator)
-          yield row[1].to_dict()
+          yield row[1].to_json()
+          yield '\n'
         except StopIteration:
           row = None
 
     generator = df.iterrows()
 
-    return self.json('rows', 'POST', data=generate_ndjson(generator), opts=opts)
+    return self.json('rows', 'POST', data=generate_ndjson(generator), opts=opts, stream=True)
 
   def to_pandas(self):
+    """
+    Returns all data in the dat as a pandas dataframe.
+    """
     if not pandas:
       print "Could not find pandas in this environment. Do you have it installed?"
       return False
