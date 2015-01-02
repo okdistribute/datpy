@@ -40,9 +40,9 @@ df = dat.to_pandas()
 dat.put_pandas(df)
 
 
-An ipython notebook for dat: http://nbviewer.ipython.org/github/pkafei/Dat-Python/blob/master/examples/Using%20Python%20with%20Dat.ipynb
-
 ```
+
+[An ipython notebook example for dat](http://nbviewer.ipython.org/github/pkafei/Dat-Python/blob/master/examples/Using%20Python%20with%20Dat.ipynb) (outdated)
 
 ## API
 
