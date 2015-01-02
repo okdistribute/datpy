@@ -1,7 +1,9 @@
 import unittest
 import json
+import pandas
 
 from dat import LocalDat, Dat, DatServerError
+
 
 host = 'http://localhost:6461'
 
@@ -66,6 +68,14 @@ class DatTest(unittest.TestCase):
     res = self.dat.rows()
     self.assertEquals(type(res), list)
     res = self.dat.rows(opts={"limit": 1})
+
+  def test_to_pandas(self):
+    with open('examples/contracts.csv') as fp:
+      res = self.dat.bulk(fp, format='csv')
+      df = self.dat.to_pandas()
+      self.assertEquals(type(df), pandas.core.frame.DataFrame)
+      self.assertEquals(df.shape, (1543, 14))
+
 
   @classmethod
   def tearDownClass(cls):
