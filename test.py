@@ -68,8 +68,19 @@ class SimpleTest(DatTest):
     }
     self.assertRaises(DatServerError, self.dat.put, data)
 
+  def test_rows(self):
+    data = {
+      "hey": "you"
+    }
+    res = self.dat.put(data)
+    self.assertEquals(res['hey'], data['hey'])
 
-class TestContracts(DatTest):
+    res = self.dat.rows()
+    self.assertEquals(type(res), list)
+
+    # test that options are passed correctly
+    res = self.dat.rows(opts={"limit": 1})
+    self.assertEquals(len(res), 1)
 
   def test_put_bulk(self):
     with open('examples/contracts.csv') as fp:
@@ -77,12 +88,6 @@ class TestContracts(DatTest):
       res = self.dat.put_bulk(fp, format='csv')
       self.assertTrue(len(self.dat.changes()) > 700)
 
-  def test_rows(self):
-    res = self.dat.rows()
-    self.assertEquals(type(res), list)
-
-    res = self.dat.rows(opts={"limit": 1})
-    self.assertEquals(len(res), 1)
 
 @unittest.skipIf(pandas is False, "skipping pandas tests")
 class TestPandas(DatTest):

@@ -46,6 +46,25 @@ dat.put_pandas(df)
 
 ```
 
+## Testing
+
+Install `nosetests` for the best testing environment. If you don't have `pandas` installed, it will skip the pandas tests.
+
+```bash
+nosetests
+```
+
+To run just one test
+
+```bash
+nosetests test.py:SimpleTest.test_rows
+```
+
+To run the entire suite without `nosetests`:
+
+```bash
+python test.py
+```
 
 ## API
 
@@ -130,8 +149,6 @@ Call the api.
 
 ```
 
-#### Dat#json
-```
 
 #### Dat#json
 Call the api and return the results as json.
@@ -153,7 +170,6 @@ Call the api and return the results as json.
 
 
 ```
-
 # BSD Licensed
 
 Copyright (c) 2014 Portia Burton and contributors.
