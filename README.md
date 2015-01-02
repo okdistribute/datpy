@@ -48,12 +48,25 @@ df = dat.to_pandas()
 dat.put_pandas(df)
 
 
+An ipython notebook for dat: http://nbviewer.ipython.org/github/pkafei/Dat-Python/blob/master/examples/Using%20Python%20with%20Dat.ipynb
+
 ```
 
 ## API
 
+#### DatAPI
 
-#### Dat#info
+`DatAPI` is a class that binds to a remote Dat via the http API. This is suitable for datasets that fit in memory.
+
+For very large datasets and for code in production, please refer to the [dat commandline documentation](https://github.com/maxogden/dat/blob/master/docs/cli-usage.md) for stable and memory-safe interaction.
+
+ ```python
+ from datPython import DatAPI
+
+ dat = DatAPI('http://imadat.myorganization.org')
+ ```
+
+#### DatAPI#info
 
  Return info about dat instance
 
@@ -73,7 +86,7 @@ dat.put_pandas(df)
 }
 ```
 
-#### Dat#changes
+#### DatAPI#changes
 
  Return the rows that have been changed
 
@@ -97,12 +110,12 @@ dat.put_pandas(df)
 ]
  ```
 
-#### Dat#rows
+#### DatAPI#to_json, DatAPI#rows
 
   Get the rows in the dat. This returns a list of dictionaries, where each dictionary is the json representation of that row.
 
   ```python
-> dat.rows()
+> dat.to_json()
 [
  {'key': 'ci4b027gv0001hyxm1oewmppr',
   'version': 1,
@@ -122,7 +135,7 @@ dat.put_pandas(df)
 
   For example, ```opts={'limit': 1}``` expands to ```http://<host>/api/rows?limit=1
   ```python
-> dat.rows(opts={"limit": 1})
+> dat.to_json(opts={"limit": 1})
 [
  {'key': 'ci4b027gv0001hyxm1oewmppr',
   'version': 1,
@@ -132,24 +145,27 @@ dat.put_pandas(df)
 ]
   ```
 
-#### Dat#csv
-Returns the data store in csv format
+#### DatAPI#to_csv
+Returns the data store in csv format.
 
 ```python
-> dat.csv()
+> dat.to_csv()
 'vote_share,wee,woo,key,version\n51.33,,,1,1\n,foo,,ci4b027fq0000hyxm4919va4t,1\n,foo,,ci4b027gv0001hyxm1oewmppr,1\n,foo,,ci4b027ho0002hyxm41wpaje6,1\n,,boop,ci4b027hw0003hyxme100j1kt,1\n,foo,,ci4b03qh00004hyxmlfddel23,1\n,foo,,ci4b03qhn0005hyxm2893j8ty,1\n,foo,,ci4b03qhz0006hyxmewff'
 ```
 
-#### Dat#import(filename, type='json')
-Import data into the dat
+#### DatAPI#to_pandas
+Returns the data store into a pandas dataframe
 
-`dat.import('example.json', 'json')`
-`dat.import('example.csv', 'csv')`
+```python
+> df = dat.to_pandas()
+> df.shape
+(770, 13)
+> df['columnName'].describe()
+etc...
+```
 
-Python in Dat Example: http://nbviewer.ipython.org/github/pkafei/Dat-Python/blob/master/examples/Using%20Python%20with%20Dat.ipynb
 
-
-#### Dat#api(resource, method, data=None, opts=None, stream=False)
+#### DatAPI#api(resource, method, data=None, opts=None, stream=False)
 Call the api.
 
 `resource`: string
@@ -180,7 +196,7 @@ Call the api.
 ```
 
 
-#### Dat#json
+#### DatAPI#json
 Call the api and return the results as json.
 ```python
 > dat.json('session', 'GET')

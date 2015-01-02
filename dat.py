@@ -56,7 +56,7 @@ class LocalDat:
     return self.call(["dat clean"])
 
 
-class Dat:
+class DatAPI:
 
   def __init__(self, host, username=None, password=None):
     # strip trailing slash
@@ -128,13 +128,6 @@ class Dat:
   def session(self):
     return self.json('session', 'GET')
 
-  def to_csv(self):
-    return self.api('csv', 'GET').content
-
-  def rows(self, opts=None):
-    resp = self.json('rows', 'GET', opts=opts)
-    return resp['rows']
-
   def put(self, data, format='json', opts=None):
     """
     Put some rows in the dat.
@@ -193,6 +186,16 @@ class Dat:
     generator = df.iterrows()
 
     return self.api('bulk', 'POST', data=generate_ndjson(generator), opts=opts, stream=True)
+
+  def rows(self, opts=None):
+    resp = self.json('rows', 'GET', opts=opts)
+    return resp['rows']
+
+  def to_json(self, opts=None):
+    return self.rows(opts=opts)
+
+  def to_csv(self):
+    return self.api('csv', 'GET').content
 
   def to_pandas(self):
     """

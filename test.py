@@ -7,7 +7,7 @@ except:
   pd = False
   np = False
 
-from dat import LocalDat, Dat, DatServerError
+from dat import LocalDat, DatAPI, DatServerError
 
 
 host = 'http://localhost:6461'
@@ -25,7 +25,7 @@ class DatTest(unittest.TestCase):
     cls.local = LocalDat()
     cls.local.init()
     cls.local.listen()
-    cls.dat = Dat(host)
+    cls.dat = DatAPI(host)
 
   @classmethod
   def tearDownClass(cls):
@@ -70,7 +70,7 @@ class SimpleTest(DatTest):
     }
     self.assertRaises(DatServerError, self.dat.put, data)
 
-  def test_rows(self):
+  def test_to_json(self):
     data = {
       "hey": "you"
     }
@@ -82,6 +82,10 @@ class SimpleTest(DatTest):
 
     # test that options are passed correctly
     res = self.dat.rows(opts={"limit": 1})
+    self.assertEquals(len(res), 1)
+
+    # test that to_json works the same
+    res = self.dat.to_json(opts={"limit": 1})
     self.assertEquals(len(res), 1)
 
   def test_put_bulk(self):
