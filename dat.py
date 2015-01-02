@@ -17,12 +17,15 @@ VALID_GET_PARAMS = ['limit', 'start', 'gt', 'lt', 'gte', 'lte', \
 class DatServerError(Exception):
   def __init__(self, resp):
     self.resp = resp
-    self.resp_content = json.loads(resp.content)
+    message = "Unknown server error. Received status code %s" % (self.resp.status_code)
 
-    if self.resp_content.get('conflict'):
-      message = self.resp_content['error']
-    else:
-      message = "Unknown server error. Received status code %s" % (self.resp_content['status'])
+    try:
+      self.resp_content = json.loads(resp.content)
+      if self.resp_content.get('conflict'):
+        message = self.resp_content['error']
+    except:
+      pass
+
     super(DatServerError, self).__init__(message)
 
 class LocalDat:
@@ -39,10 +42,9 @@ class LocalDat:
     return self.call(["dat init --no-prompt"])
 
   def listen(self):
-    p = subprocess.Popen("dat listen", shell=True)
-    while p.poll == None:
+    p = subprocess.Popen("dat listen", stdout=subprocess.PIPE, shell=True)
+    while p.stdout.read(1) == None:
       time.sleep(.5)
-      p.poll()
 
     self.server = p
     return self.server
@@ -150,18 +152,17 @@ class Dat:
     # decode data into string
     if type(data) == dict:
       data = json.dumps(data)
-
-    if type(data) == list:
-      io = StringIO()
-      for row in data:
-        io.write(json.dumps(data))
-        io.write('\n')
-      data = io
-
+      return self.json('rows', 'POST', data=data, opts=opts)
     elif pandas and type(data) == pandas.core.frame.DataFrame:
       return self.put_pandas_dataframe(data, opts)
 
-    return self.json('rows', 'POST', data=data, opts=opts)
+  def bulk(self, file_or_buffer, format='json', opts=None):
+    if opts is None:
+      opts = {}
+
+    opts['type'] = format
+
+    return self.api('bulk', 'POST', data=file_or_buffer, opts=opts, stream=True)
 
   def put_pandas_dataframe(self, df, opts=None):
     if opts is None:
@@ -169,7 +170,7 @@ class Dat:
 
     opts['type'] = 'json'
 
-    def ndjson_gen(df_gen):
+    def generate_ndjson(generator):
       ndjson = []
       row = True
       while row:
@@ -179,7 +180,9 @@ class Dat:
         except StopIteration:
           row = None
 
-    return self.json('rows', 'POST', data=ndjson_gen(df.iterrows()), opts=opts)
+    generator = df.iterrows()
+
+    return self.json('rows', 'POST', data=generate_ndjson(generator), opts=opts)
 
   def to_pandas(self):
     if not pandas:
@@ -187,8 +190,3 @@ class Dat:
       return False
 
     return pandas.read_csv(self.api_base + '/csv')
-
-
-
-
-

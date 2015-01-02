@@ -1,4 +1,5 @@
 import unittest
+import json
 
 from dat import LocalDat, Dat, DatServerError
 
@@ -35,12 +36,11 @@ class DatTest(unittest.TestCase):
     res = self.dat.to_csv()
     self.assertEqual(type(res), str)
 
-  def test_put_file(self):
-    with open('examples/contracts.csv') as f:
-      res = self.dat.put(f)
-      self.assertEquals('contractNo' in res.keys())
-
   def test_put(self):
+    data = '{"one": "world"}\n{"hello": "mars"}'
+    res = self.dat.bulk(data)
+    self.assertEquals(res.status_code, 200)
+
     data = {
       "hello": "world"
     }
@@ -48,13 +48,6 @@ class DatTest(unittest.TestCase):
 
     self.assertEquals(res['hello'], data['hello'])
     self.assertTrue('key' in res)
-
-
-    data = [{"one": "world"},{"hello": "mars"}]
-    res = self.dat.put(data)
-    self.assertEquals(res['hello'], data['hello'])
-    self.assertTrue('key' in res)
-
 
     ## raises conflict
     data = {
@@ -62,6 +55,12 @@ class DatTest(unittest.TestCase):
       "hello": "world"
     }
     self.assertRaises(DatServerError, self.dat.put, data)
+
+  def test_bulk(self):
+    with open('examples/contracts.csv') as fp:
+      self.assertTrue(len(self.dat.changes()) < 10)
+      res = self.dat.bulk(fp, format='csv')
+      self.assertTrue(len(self.dat.changes()) > 700)
 
   def test_rows(self):
     res = self.dat.rows()
