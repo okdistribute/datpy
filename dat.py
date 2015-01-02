@@ -181,7 +181,6 @@ class Dat:
     opts['type'] = 'json'
 
     def generate_ndjson(generator):
-      ndjson = []
       row = True
       while row:
         try:
@@ -193,7 +192,7 @@ class Dat:
 
     generator = df.iterrows()
 
-    return self.json('rows', 'POST', data=generate_ndjson(generator), opts=opts, stream=True)
+    return self.api('bulk', 'POST', data=generate_ndjson(generator), opts=opts, stream=True)
 
   def to_pandas(self):
     """

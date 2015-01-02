@@ -1,9 +1,11 @@
 import unittest
 import json
 try:
-  import pandas
+  import pandas as pd
+  import numpy as np
 except:
-  pandas = False
+  pd = False
+  np = False
 
 from dat import LocalDat, Dat, DatServerError
 
@@ -89,14 +91,14 @@ class SimpleTest(DatTest):
       self.assertTrue(len(self.dat.changes()) > 700)
 
 
-@unittest.skipIf(pandas is False, "skipping pandas tests")
+@unittest.skipIf(pd is False, "skipping pandas tests")
 class TestPandas(DatTest):
 
   def test_pandas(self):
     with open('examples/contracts.csv') as fp:
       res = self.dat.put_bulk(fp, format='csv')
       df = self.dat.to_pandas()
-      self.assertEquals(type(df), pandas.core.frame.DataFrame)
+      self.assertEquals(type(df), pd.core.frame.DataFrame)
       self.assertEquals(df.shape, (770, 12))
 
       # clean column, turn into float
@@ -104,11 +106,21 @@ class TestPandas(DatTest):
 
       # create ranked column.
       df['amtSpentRank'] = df['amtSpent'].rank()
-
       self.assertEquals(df.shape, (770, 13))
 
+      # okay, put it in dat
       res = self.dat.put_pandas(df)
-      print res.status_code
+      self.assertEquals(res.status_code, 200)
+
+      # get the new data in a data frame. we should see the new column there.
+      df_with_rank = self.dat.to_pandas()
+      self.assertEquals(df_with_rank.shape, (770, 13))
+      self.assertTrue(df_with_rank['amtSpentRank'].equals(df['amtSpentRank']))
+
+      # also, all of the new data should be at version 2
+      version_two = pd.Series(np.array([2] * 770))
+      self.assertTrue(df_with_rank['version'].equals(version_two))
+      self.assertFalse(df_with_rank['version'].equals(df['version']))
 
 
 
