@@ -145,6 +145,18 @@ Returns the data store in csv format.
 'vote_share,wee,woo,key,version\n51.33,,,1,1\n,foo,,ci4b027fq0000hyxm4919va4t,1\n,foo,,ci4b027gv0001hyxm1oewmppr,1\n,foo,,ci4b027ho0002hyxm41wpaje6,1\n,,boop,ci4b027hw0003hyxme100j1kt,1\n,foo,,ci4b03qh00004hyxmlfddel23,1\n,foo,,ci4b03qhn0005hyxm2893j8ty,1\n,foo,,ci4b03qhz0006hyxmewff'
 ```
 
+
+#### DatAPI#to_file
+Write the data from your dat directly to a file.
+
+`format`: 'json' or 'csv'
+
+```python
+> fp = open('path/to/file.csv', 'wb')
+> dat.to_file(fp, format='csv')
+> fp.close()
+```
+
 #### DatAPI#to_pandas
 Returns the data store into a pandas dataframe
 

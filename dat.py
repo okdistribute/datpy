@@ -191,6 +191,34 @@ class DatAPI:
     resp = self.json('rows', 'GET', opts=opts)
     return resp['rows']
 
+  def to_file(self, file_or_buffer, format='csv', opts=None):
+    """
+    Output the data in a dat to a file.
+
+    Parameters
+    ----------
+    file_or_buffer: object
+      a file pointer created with `open` or a buffer (i.e., stringIO)
+    """
+    if not opts:
+      opts = {}
+
+    if format == 'csv':
+      endpoint = 'csv'
+    elif format == 'json':
+      endpoint = 'rows'
+
+    opts['live'] = True
+
+    CHUNK_SIZE = 86
+
+    resp = self.api(endpoint, 'GET', opts=opts, stream=True)
+    for chunk in resp.iter_content(chunk_size=CHUNK_SIZE):
+      file_or_buffer.write(chunk)
+
+    return resp
+
+
   def to_json(self, opts=None):
     return self.rows(opts=opts)
 

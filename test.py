@@ -1,5 +1,6 @@
 import unittest
 import json
+import os
 try:
   import pandas as pd
   import numpy as np
@@ -10,7 +11,8 @@ except:
 from dat import LocalDat, DatAPI, DatServerError
 
 
-host = 'http://localhost:6461'
+HOST = 'http://localhost:6461'
+OUTPUT_FILE = 'examples/test.txt'
 
 class DatTest(unittest.TestCase):
   """
@@ -25,7 +27,7 @@ class DatTest(unittest.TestCase):
     cls.local = LocalDat()
     cls.local.init()
     cls.local.listen()
-    cls.dat = DatAPI(host)
+    cls.dat = DatAPI(HOST)
 
   @classmethod
   def tearDownClass(cls):
@@ -89,11 +91,53 @@ class SimpleTest(DatTest):
     self.assertEquals(len(res), 1)
 
   def test_put_bulk(self):
-    with open('examples/contracts.csv') as fp:
+    with open('examples/contracts.csv', 'rb') as fp:
       self.assertTrue(len(self.dat.changes()) < 10)
       res = self.dat.put_bulk(fp, format='csv')
       self.assertTrue(len(self.dat.changes()) > 700)
 
+
+class TestIO(DatTest):
+
+  @classmethod
+  def setUpClass(cls):
+    super(TestIO, cls).setUpClass()
+    with open('examples/contracts.csv', 'rb') as fp:
+      res = cls.dat.put_bulk(fp, format='csv')
+
+  def removeTestFile(self):
+    try:
+      os.remove(OUTPUT_FILE)
+    except OSError:
+      pass
+
+  def setUp(self):
+    self.removeTestFile()
+
+  def tearDown(self):
+    self.removeTestFile()
+
+  def test_to_file_csv(self):
+    with open(OUTPUT_FILE, 'wb') as fp:
+      self.dat.to_file(fp, format='csv')
+
+    contracts = self.dat.to_csv().split('\n')
+    with open(OUTPUT_FILE, 'rb') as test_fp:
+      i = 0
+      for test_line in test_fp.readlines():
+        contracts_line = contracts[i]
+        contracts_line += '\n'
+        self.assertEquals(test_line, contracts_line)
+        i += 1
+
+  def test_to_file_json(self):
+    with open(OUTPUT_FILE, 'wb') as fp:
+      self.dat.to_file(fp, format='json')
+
+    with open(OUTPUT_FILE, 'rb') as test_fp:
+      file_contents = test_fp.read()
+      dat_row_data = self.dat.json('rows', 'GET')
+      self.assertEquals(json.loads(file_contents), dat_row_data)
 
 @unittest.skipIf(pd is False, "skipping pandas tests")
 class TestPandas(DatTest):
