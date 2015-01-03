@@ -58,7 +58,7 @@ For very large datasets and for code in production, please refer to the [dat com
  dat = DatAPI('http://imadat.myorganization.org')
  ```
 
-#### DatAPI#info
+#### DatAPI#info()
 
  Return info about dat instance
 
@@ -78,7 +78,7 @@ For very large datasets and for code in production, please refer to the [dat com
 }
 ```
 
-#### DatAPI#changes
+#### DatAPI#changes(opts=None)
 
  Return the rows that have been changed
 
@@ -102,7 +102,9 @@ For very large datasets and for code in production, please refer to the [dat com
 ]
  ```
 
-#### DatAPI#to_json, DatAPI#rows
+#### DatAPI#to_json(opts=None)
+
+  alias: **DatAPI#rows(opts=None)**
 
   Get the rows in the dat. This returns a list of dictionaries, where each dictionary is the json representation of that row.
 
@@ -137,7 +139,7 @@ For very large datasets and for code in production, please refer to the [dat com
 ]
   ```
 
-#### DatAPI#to_csv
+#### DatAPI#to_csv()
 Returns the data store in csv format.
 
 ```python
@@ -146,7 +148,7 @@ Returns the data store in csv format.
 ```
 
 
-#### DatAPI#to_file
+#### DatAPI#to_file(fp, format='csv')
 Write the data from your dat directly to a file.
 
 `format`: 'json' or 'csv'
@@ -157,7 +159,7 @@ Write the data from your dat directly to a file.
 > fp.close()
 ```
 
-#### DatAPI#to_pandas
+#### DatAPI#to_pandas()
 Returns the data store into a pandas dataframe
 
 ```python
@@ -168,9 +170,12 @@ Returns the data store into a pandas dataframe
 etc...
 ```
 
-#### DatAPI#put_pandas
+#### DatAPI#put_pandas(dataframe)
 
 Sends a dataframe to a dat using bulk ndjson. This is still experimental.
+
+`dataframe`: pandas.core.frame.DataFrame
+
 
 ```python
 > df = dat.to_pandas()
@@ -188,7 +193,8 @@ Sends a dataframe to a dat using bulk ndjson. This is still experimental.
 You will then see the changes reflected. All of the affected rows will be bumped to the next version.
 
 #### DatAPI#api(resource, method, data=None, opts=None, stream=False)
-Call the api.
+
+**Parameters**
 
 `resource`: string
 
@@ -218,7 +224,7 @@ Call the api.
 ```
 
 
-#### DatAPI#json
+#### DatAPI#json(resource, method, data=None, opts=None, stream=False)
 Call the api and return the results as json.
 ```python
 > dat.json('session', 'GET')
