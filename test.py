@@ -81,6 +81,9 @@ class SimpleTest(DatTest):
 
     res = self.dat.rows()
     self.assertEquals(type(res), list)
+    row = res[0]
+    self.assertTrue('key' in row)
+    self.assertEquals(row['hey'], data['hey'])
 
     # test that options are passed correctly
     res = self.dat.rows(opts={"limit": 1})
@@ -96,6 +99,29 @@ class SimpleTest(DatTest):
       res = self.dat.put_bulk(fp, format='csv')
       self.assertTrue(len(self.dat.changes()) > 700)
 
+
+class TestAuth(DatTest):
+
+  @classmethod
+  def setUpClass(cls):
+    os.environ['DAT_ADMIN_USER'] = 'admin'
+    os.environ['DAT_ADMIN_PASS'] = 'pass'
+    super(TestAuth, cls).setUpClass()
+
+  def test_authentication_push_failure(self):
+    data = { "hello" : "auth" }
+    self.assertRaises(DatServerError, self.dat.put, data)
+
+  def test_authentication_push_sucess(self):
+    self.dat.auth('admin', 'pass')
+
+    data = { "hello" : "auth" }
+    res = self.dat.put(data)
+    self.assertEquals(res['hello'], data['hello'])
+
+    res = self.dat.rows()
+    row = res[0]
+    self.assertTrue('key' in row)
 
 class TestIO(DatTest):
 

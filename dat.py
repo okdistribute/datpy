@@ -62,8 +62,14 @@ class DatAPI:
     # strip trailing slash
     self.host = host.strip('/')
     self.api_base = '{}/api'.format(self.host)
-    self.auth = (username, password)
+    self.creds = (username, password)
     self.info()
+
+  def auth(self, username, password):
+    """
+    Sets up the internal auth object. Uses basic authentication.
+    """
+    self.creds = (username, password)
 
   def api(self, resource, method, data=None, opts=None, stream=False):
     """
@@ -105,8 +111,8 @@ class DatAPI:
     req = Request(method, url, params=params, data=data, headers=headers)
 
     s = Session()
-    if self.auth:
-        s.auth = self.auth
+    if self.creds:
+        s.auth = self.creds
 
     prepped = s.prepare_request(req)
     resp = s.send(prepped, stream=stream)

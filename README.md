@@ -58,6 +58,16 @@ For very large datasets and for code in production, please refer to the [dat com
  dat = DatAPI('http://imadat.myorganization.org')
  ```
 
+ and with credentials:
+ ```python
+
+ # if the dat object already exists:
+ dat.auth('admin', 'mypassword')
+
+ # alternatively, in the constructor:
+ dat = DatAPI('http://imadat.myorganization.org', username='admin', password='mypassword')
+ ```
+
 #### DatAPI#info()
 
  Return info about dat instance
@@ -244,6 +254,20 @@ Call the api and return the results as json.
 
 
 ```
+### DatAPI.auth(username, password)
+
+For Authentication, you'll need the username and password that exists on the dat server. Right now, dat uses basic auth as the authentication scheme.
+
+ ```python
+
+ # if the dat object already exists:
+ dat.auth('admin', 'mypassword')
+
+ # alternatively, in the constructor:
+ dat = DatAPI('http://imadat.myorganization.org', username='admin', password='mypassword')
+ ```
+
+ [If you forgot your password, here's some help.](https://github.com/maxogden/dat/blob/master/docs/forgot-password.md)
 
 # Developers
 
