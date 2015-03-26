@@ -20,7 +20,7 @@ Read the [docs](https://github.com/maxogden/dat) to learn more about Dat.
 
   2. Obtain the Python DAT package
 
-    `pip install datPython`
+    `pip install datpy`
 
 ## Usage
 
@@ -29,7 +29,7 @@ This is a new library and it needs work! Please don't hesitate to send a pull re
 Here's a simple example of how to read a dat's data into a pandas object, and then update the dat accordingly after editing the values.
 
 ```python
-from datPython import DatAPI
+from datpy import DatAPI
 
 dat = DatAPI('http://localhost:6461')
 
