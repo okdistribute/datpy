@@ -224,7 +224,6 @@ class DatAPI:
 
     return resp
 
-
   def to_json(self, opts=None):
     return self.rows(opts=opts)
 
