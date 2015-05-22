@@ -11,12 +11,28 @@ def stream_in(cmd, data, opts=None, parse=True):
   cmd: str
     the command to execute
   parse: boolean
-    TODO: if true, will try to parse the output from python generator or list
-
+    if true, will try to parse the output from python generator or list
   """
   cmd = get_command(cmd, opts)
   p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-  out = p.communicate(input=data)
+
+  if parse:
+    count = 0
+    for row in data:
+      count += 1
+      try:
+        line = json.dumps(row)
+      except:
+        line = row
+
+      p.stdin.write(line)
+      p.stdin.write('\n')
+
+    p.communicate()
+  else:
+    out = p.communicate(input=data)
+
+  print count
   if p.returncode == 1:
     raise Exception(out[1])
   else:
@@ -72,6 +88,19 @@ def get_command(cmd, opts):
 
   return cmd
 
+def generator(df):
+  cols = df.columns
+  count = 0
+  for kv in df.iterrows():
+    row = kv[1]
+    res = {}
+    count += 1
+    for i in xrange(0, len(cols)):
+      col = cols[i]
+      res[col] = row[i]
+    yield res
+  print count
+
 class Dat:
 
   def __init__(self, location=None):
@@ -90,8 +119,7 @@ class Dat:
     return self.call("dat import " + filename, kwargs)
 
   def import_from_pandas(self, dataframe, **kwargs):
-    ## TODO: make streaming by using a generator
-    return stream_in("dat import -", dataframe.to_csv(), kwargs, parse=True)
+    return stream_in("dat import -", generator(dataframe), kwargs, parse=True)
 
   def write(self, name, data, **kwargs):
     return stream_in("dat write " + name + " -", data, kwargs, parse=False)
