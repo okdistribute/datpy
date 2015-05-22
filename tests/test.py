@@ -1,6 +1,11 @@
 import unittest
 from dat import Dat
 
+try:
+  import pandas as pd
+except:
+  pd = False
+
 class DatTest(unittest.TestCase):
 
   @classmethod
@@ -14,23 +19,73 @@ class DatTest(unittest.TestCase):
 
 class SimpleTest(DatTest):
 
-  def test_add_with_dataset(self):
-    output = self.dat.add("examples/contracts.csv", dataset="contracts")
+  def test_import_from_file_with_dataset(self):
+    output = self.dat.import_from_file("examples/contracts.csv", dataset="contracts")
     self.assertEqual(0, output)
     output = self.dat.export(dataset="contracts")
     self.assertEqual(len(output), 770)
 
-  def test_add_with_abbr_dataset(self):
-    output = self.dat.add("examples/contracts.csv", d="contracts2")
+  def test_import_from_file_with_abbr_dataset(self):
+    output = self.dat.import_from_file("examples/contracts.csv", d="contracts2")
     self.assertEqual(0, output)
     output = self.dat.export(dataset="contracts2")
     self.assertEqual(len(output), 770)
 
-  def test_add_file(self):
-    output = self.dat.write("examples/blob.txt", d="contracts_file")
+  def test_write_file(self):
+    output = self.dat.write_from_file("examples/blob.txt", dataset="blob_txt")
     self.assertEqual(0, output)
-    output = self.dat.cat("examples/blob.txt", dataset="contracts_file")
+    output = self.dat.cat("examples/blob.txt", dataset="blob_txt")
     self.assertEqual(output, "hello world\n")
+
+  def test_write_blob_from_python(self):
+    output = self.dat.write("helloworld.txt", "hello world", dataset="hello_world_blob")
+    self.assertEqual(0, output)
+    output = self.dat.cat("helloworld.txt", dataset="hello_world_blob")
+    self.assertEqual(output, "hello world")
+
+
+@unittest.skipIf(pd is False, "skipping pandas tests")
+class TestPandas(DatTest):
+
+  def test_pandas(self):
+    # clean column, turn into float
+    df = pd.read_csv('examples/contracts.csv')
+    self.assertEquals(df.shape, (770, 10))
+
+    df['amtSpent'] = df['amtSpent'].str.replace(r'[$,]', '')
+
+    # insert data
+    output = self.dat.import_from_pandas(df, d="pandas")
+    self.assertEqual(0, output)
+
+    output = self.dat.export(dataset="pandas")
+    self.assertEqual(len(output), 770)
+    df = pd.DataFrame.from_dict(output)
+
+    # modify a column
+    # create ranked column.
+    df['amtSpentRank'] = df['amtSpent'].rank()
+    self.assertEquals(df.shape, (770, 13))
+
+    # okay, put it back in dat
+    output = self.dat.import_from_pandas(df, d="pandas", key="key")
+    self.assertEqual(0, output)
+
+    # and get it back out
+    output = self.dat.export(dataset="pandas")
+    self.assertEqual(len(output), 770)
+    df_with_rank = pd.DataFrame.from_dict(output)
+
+    # get the new data in a data frame.
+    # we should see the updated data and new column there.
+    self.assertEquals(df_with_rank.shape, (770, 13))
+
+    # do some type conversion
+    # TODO: save dtypes and automagically parse them for the python user
+    # if coming to/from pandas
+    df_with_rank['amtSpentRank'] = df_with_rank['amtSpentRank'].astype('float')
+
+    self.assertTrue(df_with_rank['amtSpentRank'].equals(df['amtSpentRank']))
 
 if __name__ == '__main__':
   unittest.main()

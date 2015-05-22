@@ -2,7 +2,27 @@ import subprocess
 import time
 import json
 
-def stream_out(cmd, opts, parse=True):
+def stream_in(cmd, data, opts=None, parse=True):
+  """
+  Streams to dat from the given command into python
+
+  Parameters
+  ----------
+  cmd: str
+    the command to execute
+  parse: boolean
+    TODO: if true, will try to parse the output from python generator or list
+
+  """
+  cmd = get_command(cmd, opts)
+  p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+  out = p.communicate(input=data)
+  if p.returncode == 1:
+    raise Exception(out[1])
+  else:
+    return 0
+
+def stream_out(cmd, opts=None, parse=True):
   """
   Streams the stdout from the given command into python
 
@@ -15,7 +35,7 @@ def stream_out(cmd, opts, parse=True):
     python lists/dictionaries
   """
   cmd = get_command(cmd, opts)
-  p = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+  p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
   if parse:
     res = []
@@ -66,15 +86,17 @@ class Dat:
   def init(self):
     return self.call(["dat init --no-prompt"])
 
-  def add(self, filename, **kwargs):
-    cmd = "dat import " + filename
-    return self.call(cmd, kwargs)
+  def import_from_file(self, filename, **kwargs):
+    return self.call("dat import " + filename, kwargs)
 
-  def heads(self):
-    res = stream_out("dat heads")
-    return res
+  def import_from_pandas(self, dataframe, **kwargs):
+    ## TODO: make streaming by using a generator
+    return stream_in("dat import -", dataframe.to_csv(), kwargs, parse=True)
 
-  def write(self, filename, **kwargs):
+  def write(self, name, data, **kwargs):
+    return stream_in("dat write " + name + " -", data, kwargs, parse=False)
+
+  def write_from_file(self, filename, **kwargs):
     return self.call("dat write " + filename, kwargs)
 
   def cat(self, filename, **kwargs):
@@ -82,9 +104,6 @@ class Dat:
 
   def export(self, dataset, **kwargs):
     return stream_out("dat export -d " + dataset, kwargs)
-
-  def close(self):
-    return subprocess.Popen.terminate(self.server)
 
   def clean(self):
     return self.call(["rm -rf .dat"])
