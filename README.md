@@ -53,42 +53,12 @@ dat.put_pandas(df)
 For very large datasets and for code in production, please refer to the [dat commandline documentation](https://github.com/maxogden/dat/blob/master/docs/cli-usage.md) for stable and memory-safe interaction.
 
  ```python
- from datPython import DatAPI
+ from datpy import Dat
 
- dat = DatAPI('http://imadat.myorganization.org')
+ dat = Dat()
  ```
 
- and with credentials:
- ```python
-
- # if the dat object already exists:
- dat.auth('admin', 'mypassword')
-
- # alternatively, in the constructor:
- dat = DatAPI('http://imadat.myorganization.org', username='admin', password='mypassword')
- ```
-
-#### DatAPI#info()
-
- Return info about dat instance
-
- ```python
- > dat.info()
- {
-  dat: "Hello",
-  version: "6.9.4",
-  changes: 49,
-  name: "dat-test",
-  description: "i am a description",
-  publisher: "karissa",
-  rows: 44,
-  approximateSize: {
-    rows: "5.93 kB"
-  }
-}
-```
-
-#### DatAPI#changes(opts=None)
+#### Dat#changes
 
  Return the rows that have been changed
 
@@ -112,14 +82,14 @@ For very large datasets and for code in production, please refer to the [dat com
 ]
  ```
 
-#### DatAPI#to_json(opts=None)
+#### Dat#exports
 
-  alias: **DatAPI#rows(opts=None)**
+  alias: **DatAPI#export**
 
   Get the rows in the dat. This returns a list of dictionaries, where each dictionary is the json representation of that row.
 
   ```python
-> dat.to_json()
+> dat.export()
 [
  {'key': 'ci4b027gv0001hyxm1oewmppr',
   'version': 1,
@@ -135,11 +105,11 @@ For very large datasets and for code in production, please refer to the [dat com
 ]
   ```
 
-  You can pass in any options supported by Dat's [REST api](https://github.com/maxogden/dat/blob/master/docs/rest-api.md)
+  You can pass in any options supported by Dat's [commandline api](https://github.com/maxogden/dat/blob/master/docs/beta-cli-api.md)
 
-  For example, ```opts={'limit': 1}``` expands to ```http://<host>/api/rows?limit=1
+  For example, ```dataset='mydataset'`` expands to `dat export --dataset=mydataset`
   ```python
-> dat.to_json(opts={"limit": 1})
+> dat.export(dataset='mydataset')
 [
  {'key': 'ci4b027gv0001hyxm1oewmppr',
   'version': 1,
@@ -148,126 +118,6 @@ For very large datasets and for code in production, please refer to the [dat com
   'republican': True},
 ]
   ```
-
-#### DatAPI#to_csv()
-Returns the data store in csv format.
-
-```python
-> dat.to_csv()
-'vote_share,wee,woo,key,version\n51.33,,,1,1\n,foo,,ci4b027fq0000hyxm4919va4t,1\n,foo,,ci4b027gv0001hyxm1oewmppr,1\n,foo,,ci4b027ho0002hyxm41wpaje6,1\n,,boop,ci4b027hw0003hyxme100j1kt,1\n,foo,,ci4b03qh00004hyxmlfddel23,1\n,foo,,ci4b03qhn0005hyxm2893j8ty,1\n,foo,,ci4b03qhz0006hyxmewff'
-```
-
-
-#### DatAPI#to_file(fp, format='csv')
-Write the data from your dat directly to a file.
-
-`format`: 'json' or 'csv'
-
-```python
-> fp = open('path/to/file.csv', 'wb')
-> dat.to_file(fp, format='csv')
-> fp.close()
-```
-
-#### DatAPI#to_pandas()
-Returns the data store into a pandas dataframe
-
-```python
-> df = dat.to_pandas()
-> df.shape
-(770, 13)
-> df['columnName'].describe()
-etc...
-```
-
-#### DatAPI#put_pandas(dataframe)
-
-Sends a dataframe to a dat using bulk ndjson. This is still experimental.
-
-`dataframe`: pandas.core.frame.DataFrame
-
-
-```python
-> df = dat.to_pandas()
-
-# clean a column
-> df['columnName'] = clean_up_column(df['columnName'])
-
-# add a column
-> df['anotherColumn'] = pd.Series([1, 2, 3, 4])
-
-> dat.put_pandas(df)
-
-```
-
-You will then see the changes reflected. All of the affected rows will be bumped to the next version.
-
-#### DatAPI#api(resource, method, data=None, opts=None, stream=False)
-
-**Parameters**
-
-`resource`: string
-
-  the api resource to access. (e.g. 'rows', 'csv', 'session')
-
-`method`: string
-
-  the http method to use. (e.g., 'GET', 'PUT')
-
-`data`: object (optional)
-
-  arguments to be sent into raw body data (e.g., on post)
-
-`opts`: object (optional)
-
-  arguments to be entered into query parameters
-
-`stream`: boolean (optional, default False)
-
-  whether to stream the response
-
-````python
-
-> dat.api('csv', 'GET')
-'vote_share,wee,woo,key,version\n51.33,,,1,1\n,foo,,ci4b027fq0000hyxm4919va4t,1\n,foo,,ci4b027gv0001hyxm1oewmppr,1\n,foo,,ci4b027ho0002hyxm41wpaje6,1\n,,boop,ci4b027hw0003hyxme100j1kt,1\n,foo,,ci4b03qh00004hyxmlfddel23,1\n,foo,,ci4b03qhn0005hyxm2893j8ty,1\n,foo,,ci4b03qhz0006hyxmewff'
-
-```
-
-
-#### DatAPI#json(resource, method, data=None, opts=None, stream=False)
-Call the api and return the results as json.
-```python
-> dat.json('session', 'GET')
-{'loggedOut': True}
-
-
-> data = {
-  "vote_share": 49.59,
-  "republican": False
-}
-> dat.json('rows', 'POST', data=json.dumps(data), opts={"format": "json"})
- {'key': 'ci4b027fq0000hyxm4919va4t',
-  'version': 2,
-  'vote_share': 49.53,
-  'state': 'DE',
-  'republican': False},
-
-
-```
-### DatAPI.auth(username, password)
-
-For Authentication, you'll need the username and password that exists on the dat server. Right now, dat uses basic auth as the authentication scheme.
-
- ```python
-
- # if the dat object already exists:
- dat.auth('admin', 'mypassword')
-
- # alternatively, in the constructor:
- dat = DatAPI('http://imadat.myorganization.org', username='admin', password='mypassword')
- ```
-
- [If you forgot your password, here's some help.](https://github.com/maxogden/dat/blob/master/docs/forgot-password.md)
 
 # Developers
 
