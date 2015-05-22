@@ -1,31 +1,36 @@
 import unittest
-from datpy.dat import LocalDat
+from dat import Dat
 
 class DatTest(unittest.TestCase):
 
   @classmethod
   def setUpClass(cls):
-    cls.local = LocalDat()
-    cls.local.init()
+    cls.dat = Dat()
+    cls.dat.init()
 
   @classmethod
   def tearDownClass(cls):
-    cls.local.clean()
+    cls.dat.clean()
 
 class SimpleTest(DatTest):
 
-  def test_add(self):
-    output = self.local.add("examples/contracts.csv")
+  def test_add_with_dataset(self):
+    output = self.dat.add("examples/contracts.csv", dataset="contracts")
     self.assertEqual(0, output)
+    output = self.dat.export(dataset="contracts")
+    self.assertEqual(len(output), 770)
 
-  def test_cat(self):
-    output = self.local.cat()
-    self.assertEqual(770, len(output))
-      	
-  def test_heads(self):
-    output = self.local.heads()
-    self.assertEqual(str, type(output))
-    self.assertTrue(len(output)  > 20)
-  
+  def test_add_with_abbr_dataset(self):
+    output = self.dat.add("examples/contracts.csv", d="contracts2")
+    self.assertEqual(0, output)
+    output = self.dat.export(dataset="contracts2")
+    self.assertEqual(len(output), 770)
+
+  def test_add_file(self):
+    output = self.dat.write("examples/blob.txt", d="contracts_file")
+    self.assertEqual(0, output)
+    output = self.dat.cat("examples/blob.txt", dataset="contracts_file")
+    self.assertEqual(output, "hello world\n")
+
 if __name__ == '__main__':
   unittest.main()

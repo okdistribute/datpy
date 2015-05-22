@@ -1,8 +1,10 @@
 from distutils.core import setup
+import setuptools
+
 setup(
   name = 'datpy',
-  packages = ['datpy'],
   version = '0.2',
+  py_modules=['dat'],
   description = 'Python dough for making Dat-flavored pies',
   author = 'Karissa McKelvey',
   author_email = 'krmckelv@gmail.com',
