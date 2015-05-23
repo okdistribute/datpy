@@ -29,17 +29,22 @@ This is a new library and it needs work! Please don't hesitate to send a pull re
 Here's a simple example of how to read a dat's data into a pandas object, and then update the dat accordingly after editing the values.
 
 ```python
-from datpy import DatAPI
+from datpy import Dat
+import pandas as pd
 
-dat = DatAPI('http://localhost:6461')
+dat = Dat()
 
-df = dat.to_pandas()
+## initialize dat
+dat.init(tempdir())
 
-# ... do some stuff to the pandas dataframe ...
+df = pd.read_csv('cities.csv')
 
-dat.put_pandas(df)
+## uses the unique column 'city_code' to identify and version rows over time
+v1 = dat.insert(df, dataset="cities", key="city_code")
 
-
+## get the data at a certain version
+data = dat.export(dataset="cities", checkout=v1)
+df_v1 = pd.DataFrame.from_dict(data)
 ```
 
 [An ipython notebook example for dat](http://nbviewer.ipython.org/github/pkafei/Dat-Python/blob/master/examples/Using%20Python%20with%20Dat.ipynb) (outdated)
@@ -58,33 +63,7 @@ For very large datasets and for code in production, please refer to the [dat com
  dat = Dat()
  ```
 
-#### Dat#changes
-
- Return the rows that have been changed
-
- ```python
- > dat.changes()
-[
-  {
-    change: 1,
-    key: "schema",
-    from: 0,
-    to: 1,
-    subset: "internal"
-  },
-  {
-    change: 2,
-    key: "ci4etk0wq0000tjxmj7ii2wx6",
-    from: 0,
-    to: 1
-  },
-  etc...
-]
- ```
-
-#### Dat#exports
-
-  alias: **DatAPI#export**
+#### Dat#export
 
   Get the rows in the dat. This returns a list of dictionaries, where each dictionary is the json representation of that row.
 

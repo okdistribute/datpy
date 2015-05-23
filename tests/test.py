@@ -19,27 +19,27 @@ class DatTest(unittest.TestCase):
 
 class SimpleTest(DatTest):
 
-  def test_import_from_file_with_dataset(self):
-    output = self.dat.import_from_file("examples/contracts.csv", dataset="contracts")
-    self.assertEqual(0, output)
+  def test_insert_with_dataset(self):
+    version = self.dat.insert_from_file("examples/contracts.csv", dataset="contracts")
+    self.assertEqual(len(version), 64)
     output = self.dat.export(dataset="contracts")
     self.assertEqual(len(output), 770)
 
-  def test_import_from_file_with_abbr_dataset(self):
-    output = self.dat.import_from_file("examples/contracts.csv", d="contracts2")
-    self.assertEqual(0, output)
+  def test_insert_with_abbr_dataset(self):
+    version = self.dat.insert_from_file("examples/contracts.csv", d="contracts2")
+    self.assertEqual(len(version), 64)
     output = self.dat.export(dataset="contracts2")
     self.assertEqual(len(output), 770)
 
   def test_write_file(self):
-    output = self.dat.write_from_file("examples/blob.txt", dataset="blob_txt")
-    self.assertEqual(0, output)
+    version = self.dat.write_file("examples/blob.txt", dataset="blob_txt")
+    self.assertEqual(len(version), 64)
     output = self.dat.cat("examples/blob.txt", dataset="blob_txt")
     self.assertEqual(output, "hello world\n")
 
   def test_write_blob_from_python(self):
-    output = self.dat.write("helloworld.txt", "hello world", dataset="hello_world_blob")
-    self.assertEqual(0, output)
+    version = self.dat.write("helloworld.txt", "hello world", dataset="hello_world_blob")
+    self.assertEqual(len(version), 64)
     output = self.dat.cat("helloworld.txt", dataset="hello_world_blob")
     self.assertEqual(output, "hello world")
 
@@ -55,8 +55,8 @@ class TestPandas(DatTest):
     df['amtSpent'] = df['amtSpent'].str.replace(r'[$,]', '')
 
     # insert data
-    output = self.dat.import_from_pandas(df, d="pandas")
-    self.assertEqual(0, output)
+    version = self.dat.insert(df, d="pandas")
+    self.assertEqual(64, len(version))
 
     output = self.dat.export(dataset="pandas")
     self.assertEqual(len(output), 770)
@@ -68,8 +68,8 @@ class TestPandas(DatTest):
     self.assertEquals(df.shape, (770, 13))
 
     # okay, put it back in dat
-    output = self.dat.import_from_pandas(df, d="pandas", key="key")
-    self.assertEqual(0, output)
+    version = self.dat.insert(df, d="pandas", key="key")
+    self.assertEqual(len(version), 64)
 
     # and get it back out
     output = self.dat.export(dataset="pandas")
