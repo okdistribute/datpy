@@ -2,6 +2,11 @@ import subprocess
 import time
 import json
 
+try:
+  import pandas as pd
+except:
+  pd = False
+
 class Dat:
 
   def __init__(self, location=None):
@@ -9,29 +14,42 @@ class Dat:
       subprocess.call(["cd", self.location])
       self.location = location
 
+    self.version = None
+
   def init(self):
     return subprocess.call(["dat init --no-prompt"], shell=True)
 
-  def insert_from_file(self, filename, **kwargs):
+  def checkout(self, version):
+    self.version = version
+    return subprocess.call(["dat checkout " + version], shell=True)
+
+  def import_file(self, filename, **kwargs):
     p = process("dat import " + filename, kwargs)
     stdout, stderr = p.communicate()
-    return version(stdout)
+    return _set_version_from_log(stdout)
 
-  def insert(self, dataframe, **kwargs):
+  def import_dataframe(self, dataframe, **kwargs):
     ## TODO: make streaming by using a generator
     p = process("dat import -", kwargs)
     stdout, stderr = stream_in(p, dataframe.to_csv(), parse=True)
-    return version(stdout)
+    return _set_version_from_log(stdout)
 
   def write(self, name, data, **kwargs):
     p = process("dat write " + name + " -", kwargs)
     stdout, stderr = stream_in(p, data, parse=False)
-    return version(stdout)
+    return _set_version_from_log(stdout)
 
   def write_file(self, filename, **kwargs):
     p = process("dat write " + filename, kwargs)
     stdout, stderr = p.communicate()
-    return version(stdout)
+    return _set_version_from_log(stdout)
+
+  def export_as_dataframe(self, dataset, **kwargs):
+    if not pd:
+      raise Exception("Can't find pandas. Is it available on your path?")
+
+    output = self.export(dataset, **kwargs)
+    return pd.DataFrame.from_dict(output)
 
   def cat(self, filename, **kwargs):
     return stream_out("dat cat " + filename, kwargs, parse=False)
@@ -41,6 +59,11 @@ class Dat:
 
   def clean(self, **kwargs):
     return subprocess.call(["rm -rf .dat"], shell=True)
+
+  def _set_version_from_log(self, stdout):
+    log = json.loads(stdout)
+    self.version = log["version"]
+    return self.version
 
 def process(cmd, opts):
   """
@@ -111,7 +134,3 @@ def stream_out(cmd, opts=None, parse=True):
 
   subprocess.Popen.terminate(p)
   return res
-
-def version(stdout):
-  log = json.loads(stdout)
-  return log['version']

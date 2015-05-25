@@ -40,7 +40,7 @@ dat.init(tempdir())
 df = pd.read_csv('cities.csv')
 
 ## uses the unique column 'city_code' to identify and version rows over time
-v1 = dat.insert(df, dataset="cities", key="city_code")
+v1 = dat.import_dataframe(df, dataset="cities", key="city_code")
 
 ## get the data at a certain version
 data = dat.export(dataset="cities", checkout=v1)
@@ -51,9 +51,9 @@ df_v1 = pd.DataFrame.from_dict(data)
 
 ## API
 
-#### DatAPI
+#### Dat
 
-`DatAPI` is a class that binds to a remote Dat via the http API. This is suitable for datasets that fit in memory.
+`Dat` is a class that binds to a Dat on your hard drive. Datasets are loaded streaming from the filesystem into python's memory.
 
 For very large datasets and for code in production, please refer to the [dat commandline documentation](https://github.com/maxogden/dat/blob/master/docs/cli-usage.md) for stable and memory-safe interaction.
 
@@ -61,7 +61,35 @@ For very large datasets and for code in production, please refer to the [dat com
  from datpy import Dat
 
  dat = Dat()
+
+ dat = Dat('./path/to/data')
  ```
+
+  For each of the  you can pass in any options supported by Dat's [commandline api](https://github.com/maxogden/dat/blob/master/docs/beta-cli-api.md)
+
+  For example, ```dataset='mydataset'`` expands to `dat export --dataset=mydataset`
+  ```python
+> dat.export(dataset='mydataset')
+[
+ {'key': 'abc2f3d234abc234ef1g13d',
+  'vote_share': 51.33,
+  'state': 'CA',
+  'republican': True},
+]
+  ```
+
+#### Dat#import_file
+
+  Import rows from a tabular file into dat.
+  Returns the new version of the dat repository as a string.
+
+  ```python
+  > dat = Dat()
+  > v1 = dat.import_file('tables/cities.csv', dataset='cities_data', key='cityId')
+  > v1
+  'abc2f3d234abc234ef1g13d'
+  ```
+
 
 #### Dat#export
 
@@ -70,31 +98,15 @@ For very large datasets and for code in production, please refer to the [dat com
   ```python
 > dat.export()
 [
- {'key': 'ci4b027gv0001hyxm1oewmppr',
-  'version': 1,
+ {'key': 'abc2f3d234abc234ef1g13d',
   'vote_share': 51.33,
   'state': 'CA',
   'republican': True},
- {'key': 'ci4b027fq0000hyxm4919va4t',
-  'version': 2,
+ {'key': 'df1cdf3c23bc234ef1g13d',
   'vote_share': 49.53,
   'state': 'DE',
   'republican': False},
   ...
-]
-  ```
-
-  You can pass in any options supported by Dat's [commandline api](https://github.com/maxogden/dat/blob/master/docs/beta-cli-api.md)
-
-  For example, ```dataset='mydataset'`` expands to `dat export --dataset=mydataset`
-  ```python
-> dat.export(dataset='mydataset')
-[
- {'key': 'ci4b027gv0001hyxm1oewmppr',
-  'version': 1,
-  'vote_share': 51.33,
-  'state': 'CA',
-  'republican': True},
 ]
   ```
 
