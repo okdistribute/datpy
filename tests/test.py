@@ -17,31 +17,31 @@ class DatTest(unittest.TestCase):
   def tearDownClass(cls):
     cls.dat.clean()
 
-# class SimpleTest(DatTest):
+class SimpleTest(DatTest):
 
-#   def test_insert_with_dataset(self):
-#     version = self.dat.import_file("examples/contracts.csv", dataset="contracts")
-#     self.assertEqual(len(version), 64)
-#     output = self.dat.export(dataset="contracts")
-#     self.assertEqual(len(output), 770)
+  def test_insert_with_dataset(self):
+    version = self.dat.import_file("examples/contracts.csv", dataset="contracts")
+    self.assertEqual(len(version), 64)
+    output = self.dat.export(dataset="contracts")
+    self.assertEqual(len(output), 770)
 
-#   def test_insert_with_abbr_dataset(self):
-#     version = self.dat.import_file("examples/contracts.csv", d="contracts2")
-#     self.assertEqual(len(version), 64)
-#     output = self.dat.export(dataset="contracts2")
-#     self.assertEqual(len(output), 770)
+  def test_insert_with_abbr_dataset(self):
+    version = self.dat.import_file("examples/contracts.csv", d="contracts2")
+    self.assertEqual(len(version), 64)
+    output = self.dat.export(dataset="contracts2")
+    self.assertEqual(len(output), 770)
 
-#   def test_write_file(self):
-#     version = self.dat.write_file("examples/blob.txt", dataset="blob_txt")
-#     self.assertEqual(len(version), 64)
-#     output = self.dat.cat("examples/blob.txt", dataset="blob_txt")
-#     self.assertEqual(output, "hello world\n")
+  def test_write_file(self):
+    version = self.dat.write_file("examples/blob.txt", dataset="blob_txt")
+    self.assertEqual(len(version), 64)
+    output = self.dat.cat("examples/blob.txt", dataset="blob_txt")
+    self.assertEqual(output, "hello world\n")
 
-#   def test_write_blob_from_python(self):
-#     version = self.dat.write("helloworld.txt", "hello world", dataset="hello_world_blob")
-#     self.assertEqual(len(version), 64)
-#     output = self.dat.cat("helloworld.txt", dataset="hello_world_blob")
-#     self.assertEqual(output, "hello world")
+  def test_write_blob_from_python(self):
+    version = self.dat.write("helloworld.txt", "hello world", dataset="hello_world_blob")
+    self.assertEqual(len(version), 64)
+    output = self.dat.cat("helloworld.txt", dataset="hello_world_blob")
+    self.assertEqual(output, "hello world")
 
 
 @unittest.skipIf(pd is False, "skipping pandas tests")
