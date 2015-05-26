@@ -57,7 +57,12 @@ class Dat:
   def export(self, dataset, **kwargs):
     return stream_out("dat export -d " + dataset, kwargs)
 
-  def clean(self, **kwargs):
+  def clone(self, where, **kwargs):
+    p = process("dat clone " + where, kwargs)
+    stdout, stderr = p.communicate()
+    return p.returncode
+
+  def clean(self):
     return subprocess.call(["rm -rf .dat"], shell=True)
 
   def _set_version_from_log(self, stdout):

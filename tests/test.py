@@ -43,7 +43,6 @@ class SimpleTest(DatTest):
     output = self.dat.cat("helloworld.txt", dataset="hello_world_blob")
     self.assertEqual(output, "hello world")
 
-
 @unittest.skipIf(pd is False, "skipping pandas tests")
 class TestPandas(DatTest):
 
