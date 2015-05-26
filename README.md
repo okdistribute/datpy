@@ -9,7 +9,6 @@ Hello, collaboration.
 Dat is a open data project designed to make data more accessible:
 
 * Track incremental changes made in datasets
-* Provide a REST api to share your data
 * Designed to work with all data: big and small
 
 Read the [docs](https://github.com/maxogden/dat) to learn more about Dat.
