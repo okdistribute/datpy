@@ -1,11 +1,25 @@
 import subprocess
 import time
-import json
+
+try:
+  import ujson as json
+except:
+  import json
 
 try:
   import pandas as pd
 except:
   pd = False
+
+def returns_version(func):
+  def inner(*args, **kwargs):
+    stdout, stderr = func(*args, **kwargs)
+    log = json.loads(stdout)
+    self = args[0]
+    self.version = log["version"]
+    return self.version
+
+  return inner
 
 class Dat:
 
@@ -23,28 +37,30 @@ class Dat:
     self.version = version
     return subprocess.call(["dat checkout " + version], shell=True)
 
+  @returns_version
   def import_file(self, filename, **kwargs):
     p = process("dat import " + filename, kwargs)
-    stdout, stderr = p.communicate()
-    return _set_version_from_log(stdout)
+    return p.communicate()
 
+  @returns_version
   def import_dataframe(self, dataframe, **kwargs):
     ## TODO: make streaming by using a generator
     p = process("dat import -", kwargs)
     stdout, stderr = stream_in(p, dataframe.to_csv(), parse=True)
-    return _set_version_from_log(stdout)
+    return (stdout, stderr)
 
+  @returns_version
   def write(self, name, data, **kwargs):
     p = process("dat write " + name + " -", kwargs)
     stdout, stderr = stream_in(p, data, parse=False)
-    return _set_version_from_log(stdout)
+    return (stdout, stderr)
 
+  @returns_version
   def write_file(self, filename, **kwargs):
     p = process("dat write " + filename, kwargs)
-    stdout, stderr = p.communicate()
-    return _set_version_from_log(stdout)
+    return p.communicate()
 
-  def export_as_dataframe(self, dataset, **kwargs):
+  def as_dataframe(self, dataset, **kwargs):
     if not pd:
       raise Exception("Can't find pandas. Is it available on your path?")
 
@@ -64,11 +80,6 @@ class Dat:
 
   def clean(self):
     return subprocess.call(["rm -rf .dat"], shell=True)
-
-  def _set_version_from_log(self, stdout):
-    log = json.loads(stdout)
-    self.version = log["version"]
-    return self.version
 
 def process(cmd, opts):
   """
