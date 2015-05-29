@@ -1,4 +1,6 @@
 import unittest
+import json
+
 from dat import Dat
 
 try:
@@ -41,11 +43,40 @@ class SimpleTest(DatTest):
     self.assertEqual(output, "hello world\n")
 
   def test_write_blob_from_python(self):
-    version = self.dat.write("hello world", name="helloworld.txt", dataset="hello_world_blob")
+    version = self.dat.write("hello world", "hello", dataset="blobs")
     self.assertEqual(len(version), 64)
     self.assertEqual(version, self.dat.version)
-    output = self.dat.cat("helloworld.txt", dataset="hello_world_blob")
+    output = self.dat.cat("hello", dataset="blobs")
     self.assertEqual(output, "hello world")
+
+  def test_write_dict_from_python(self):
+    my_python_object = {
+      "hello": "world",
+      "goodbye": "mars"
+    }
+    binary_data = json.dumps(my_python_object)
+    version = self.dat.write(binary_data, "helloworld_dict", dataset="blobs")
+    self.assertEqual(len(version), 64)
+    self.assertEqual(version, self.dat.version)
+
+    out_data = self.dat.cat("helloworld_dict", dataset="blobs")
+    output = json.loads(out_data)
+    self.assertEqual(type(output), dict)
+    self.assertEqual(output["hello"], "world")
+
+  def test_write_pickle_from_python(self):
+    my_python_object = {
+      "hello": "mars",
+      "goodbye": "world"
+    }
+    version = self.dat.write_pickle(my_python_object, "helloworld_dict", dataset="blobs")
+    self.assertEqual(len(version), 64)
+    self.assertEqual(version, self.dat.version)
+
+    output = self.dat.read_pickle("helloworld_dict", dataset="blobs")
+    self.assertEqual(type(output), dict)
+    self.assertEqual(output["hello"], "mars")
+
 
 @unittest.skipIf(pd is False, "skipping pandas tests")
 class TestPandas(DatTest):

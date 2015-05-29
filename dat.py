@@ -1,5 +1,6 @@
 import subprocess
 import time
+import cPickle
 
 try:
   import ujson as json
@@ -50,7 +51,7 @@ class Dat:
     return (stdout, stderr)
 
   @returns_version
-  def write(self, data, name=None, **kwargs):
+  def write(self, data, name, **kwargs):
     p = process("dat write " + name + " -", kwargs)
     stdout, stderr = stream_in(p, data, parse=False)
     return (stdout, stderr)
@@ -60,15 +61,23 @@ class Dat:
     p = process("dat write " + filename, kwargs)
     return p.communicate()
 
+  def write_pickle(self, data, name, **kwargs):
+    data = cPickle.dumps(data)
+    return self.write(data, name, **kwargs)
+
+  def read_pickle(self, name, **kwargs):
+    data = self.cat(name, **kwargs)
+    return cPickle.loads(data)
+
+  def cat(self, name, **kwargs):
+    return stream_out("dat cat " + name, kwargs, parse=False)
+
   def as_dataframe(self, dataset, **kwargs):
     if not pd:
       raise Exception("Can't find pandas. Is it available on your path?")
 
     output = self.export(dataset, **kwargs)
     return pd.DataFrame.from_dict(output)
-
-  def cat(self, filename, **kwargs):
-    return stream_out("dat cat " + filename, kwargs, parse=False)
 
   def export(self, dataset, **kwargs):
     return stream_out("dat export -d " + dataset, kwargs)
