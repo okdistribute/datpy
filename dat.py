@@ -50,7 +50,7 @@ class Dat:
     return (stdout, stderr)
 
   @returns_version
-  def write(self, name, data, **kwargs):
+  def write(self, data, name=None, **kwargs):
     p = process("dat write " + name + " -", kwargs)
     stdout, stderr = stream_in(p, data, parse=False)
     return (stdout, stderr)

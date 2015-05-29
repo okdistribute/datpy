@@ -41,7 +41,7 @@ class SimpleTest(DatTest):
     self.assertEqual(output, "hello world\n")
 
   def test_write_blob_from_python(self):
-    version = self.dat.write("helloworld.txt", "hello world", dataset="hello_world_blob")
+    version = self.dat.write("hello world", name="helloworld.txt", dataset="hello_world_blob")
     self.assertEqual(len(version), 64)
     self.assertEqual(version, self.dat.version)
     output = self.dat.cat("helloworld.txt", dataset="hello_world_blob")
