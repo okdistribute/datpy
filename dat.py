@@ -105,13 +105,14 @@ def process(cmd, opts):
   if opts is None:
     opts = {}
 
-  opts['log'] = 'json'
+  cmd += ' --json '
 
   for key, val in opts.iteritems():
     if (len(key) == 1):
       cmd += ' -' + key + ' ' + val
     else:
       cmd += ' --' + key + '=' + val
+
 
   return subprocess.Popen(cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
