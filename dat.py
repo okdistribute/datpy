@@ -66,11 +66,11 @@ class Dat:
     return self.write(data, name, **kwargs)
 
   def read_pickle(self, name, **kwargs):
-    data = self.cat(name, **kwargs)
+    data = self.read(name, **kwargs)
     return cPickle.loads(data)
 
-  def cat(self, name, **kwargs):
-    return stream_out("dat cat " + name, kwargs, parse=False)
+  def read(self, name, **kwargs):
+    return stream_out("dat read " + name, kwargs, parse=False)
 
   def as_dataframe(self, dataset, **kwargs):
     if not pd:
@@ -112,7 +112,6 @@ def process(cmd, opts):
       cmd += ' -' + key + ' ' + val
     else:
       cmd += ' --' + key + '=' + val
-
 
   return subprocess.Popen(cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 

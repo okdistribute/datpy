@@ -39,14 +39,14 @@ class SimpleTest(DatTest):
     version = self.dat.write_file("examples/blob.txt", dataset="blob_txt")
     self.assertEqual(len(version), 64)
     self.assertEqual(version, self.dat.version)
-    output = self.dat.cat("examples/blob.txt", dataset="blob_txt")
+    output = self.dat.read("examples/blob.txt", dataset="blob_txt")
     self.assertEqual(output, "hello world\n")
 
   def test_write_blob_from_python(self):
     version = self.dat.write("hello world", "hello", dataset="blobs")
     self.assertEqual(len(version), 64)
     self.assertEqual(version, self.dat.version)
-    output = self.dat.cat("hello", dataset="blobs")
+    output = self.dat.read("hello", dataset="blobs")
     self.assertEqual(output, "hello world")
 
   def test_write_dict_from_python(self):
@@ -59,7 +59,7 @@ class SimpleTest(DatTest):
     self.assertEqual(len(version), 64)
     self.assertEqual(version, self.dat.version)
 
-    out_data = self.dat.cat("helloworld_dict", dataset="blobs")
+    out_data = self.dat.read("helloworld_dict", dataset="blobs")
     output = json.loads(out_data)
     self.assertEqual(type(output), dict)
     self.assertEqual(output["hello"], "world")
