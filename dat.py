@@ -72,7 +72,7 @@ class Dat:
   def read(self, name, **kwargs):
     return stream_out("dat read " + name, kwargs, parse=False)
 
-  def as_dataframe(self, dataset, **kwargs):
+  def export_dataframe(self, dataset, **kwargs):
     if not pd:
       raise Exception("Can't find pandas. Is it available on your path?")
 

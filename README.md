@@ -56,18 +56,18 @@ df_v1 = pd.DataFrame.from_dict(data)
 
 For very large datasets and for code in production, please refer to the [dat commandline documentation](https://github.com/maxogden/dat/blob/master/docs/cli-usage.md) for stable and memory-safe interaction.
 
- ```python
- from datpy import Dat
+```python
+from datpy import Dat
 
- dat = Dat()
+dat = Dat()
 
- dat = Dat('./path/to/data')
- ```
+dat = Dat('./path/to/dat/repo')
+```
 
-  For each of the  you can pass in any options supported by Dat's [commandline api](https://github.com/maxogden/dat/blob/master/docs/beta-cli-api.md)
+For each command, a `dat` instance accepts any of the options supported by Dat's [commandline api](http://datproject.readthedocs.org/en/latest/cli-docs/)
 
-  For example, ```dataset='mydataset'`` expands to `dat export --dataset=mydataset`
-  ```python
+For example, ```dataset='mydataset'`` expands to `dat export --dataset=mydataset`
+```python
 > dat.export(dataset='mydataset')
 [
  {'key': 'abc2f3d234abc234ef1g13d',
@@ -75,39 +75,79 @@ For very large datasets and for code in production, please refer to the [dat com
   'state': 'CA',
   'republican': True},
 ]
-  ```
-
-#### Dat#import_file
-
-  Import rows from a tabular file into dat.
-  Returns the new version of the dat repository as a string.
-
-  ```python
-  > dat = Dat()
-  > v1 = dat.import_file('tables/cities.csv', dataset='cities_data', key='cityId')
-  > v1
-  'abc2f3d234abc234ef1g13d'
-  ```
+```
 
 
-#### Dat#export
+### import_dataframe
 
-  Get the rows in the dat. This returns a list of dictionaries, where each dictionary is the json representation of that row.
+Import rows from a pandas dataframe. Returns the new version of the dat repository as a string.
 
-  ```python
+```python
+> df = pd.read_csv('examples/contracts.csv')
+
+# insert data
+> v1 = self.dat.import_dataframe(df, dataset="contracts", key='id')
+> v1
+'abc2f3d234abc234ef1g13d'
+```
+
+### export_dataframe
+
+``python
+# get same data that was inserted at v1
+> df = self.dat.export_dataframe(dataset="contracts", checkout=v1)
+```
+
+#### import_file
+
+Import rows from a tabular file into dat. Returns the new version of the dat repository as a string.
+
+```python
+> v1 = dat.import_file('tables/cities.csv', dataset='cities_data', key='cityId')
+> v1
+'abc2f3d234abc234ef1g13d'
+```
+
+#### export
+
+Get the rows in the dat. This returns a list of dictionaries, where each dictionary is the json representation of that row.
+
+```python
 > dat.export()
 [
- {'key': 'abc2f3d234abc234ef1g13d',
+  {'key': 'abc2f3d234abc234ef1g13d',
   'vote_share': 51.33,
   'state': 'CA',
   'republican': True},
- {'key': 'df1cdf3c23bc234ef1g13d',
+  {'key': 'df1cdf3c23bc234ef1g13d',
   'vote_share': 49.53,
   'state': 'DE',
   'republican': False},
   ...
 ]
-  ```
+```
+
+### write_pickle
+
+Write any python data or object to dat as a pickle, that is, as a compressed binary file on disk in the dat. Returns a version which can be refrenced later to retrieve the pickle as it was written.
+
+```python
+my_python_object = {
+  "hello": "mars",
+  "goodbye": "world"
+}
+v2 = dat.write_pickle(my_python_object, "hello_world", dataset="blobs")
+```
+
+### read_pickle
+
+Read a binary object from dat at a given version that has been stored as a python pickle.
+
+```python
+output = self.dat.read_pickle("hello_world", dataset="blobs", checkout=v2)
+
+# output is my_python_object
+```
 
 # Developers
 

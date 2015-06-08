@@ -95,7 +95,7 @@ class TestPandas(DatTest):
     output = self.dat.export(dataset="pandas")
     self.assertEqual(len(output), 770)
 
-    df = self.dat.as_dataframe(dataset="pandas")
+    df = self.dat.export_dataframe(dataset="pandas")
 
     # modify a column
     # create ranked column.
