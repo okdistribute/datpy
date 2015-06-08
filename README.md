@@ -93,7 +93,9 @@ Import rows from a pandas dataframe. Returns the new version of the dat reposito
 
 ### export_dataframe
 
-``python
+Get data from the dat as a pandas dataframe.
+
+```python
 # get same data that was inserted at v1
 > df = self.dat.export_dataframe(dataset="contracts", checkout=v1)
 ```
