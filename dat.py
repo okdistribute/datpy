@@ -22,6 +22,17 @@ def returns_version(func):
 
   return inner
 
+def clone(URL, path, **kwargs):
+  """
+  Parameters
+  """
+  p = process("dat clone {0} {1}".format(URL, path), kwargs)
+  stdout, stderr = p.communicate()
+  if (p.returncode == 0):
+    return Dat(path)
+  else:
+   return p.returncode
+
 class Dat:
 
   def __init__(self, location=None):
@@ -52,7 +63,7 @@ class Dat:
 
   @returns_version
   def write(self, data, name, **kwargs):
-    p = process("dat write " + name + " -", kwargs)
+    p = process("dat write {0} -".format(name), kwargs)
     stdout, stderr = stream_in(p, data, parse=False)
     return (stdout, stderr)
 
@@ -82,11 +93,6 @@ class Dat:
   def export(self, dataset, **kwargs):
     return stream_out("dat export -d " + dataset, kwargs)
 
-  def clone(self, where, **kwargs):
-    p = process("dat clone " + where, kwargs)
-    stdout, stderr = p.communicate()
-    return p.returncode
-
   def clean(self):
     return subprocess.call(["rm -rf .dat"], shell=True)
 
@@ -109,9 +115,9 @@ def process(cmd, opts):
 
   for key, val in opts.iteritems():
     if (len(key) == 1):
-      cmd += ' -' + key + ' ' + val
+      cmd += " -{0} {1}".format(key, val)
     else:
-      cmd += ' --' + key + '=' + val
+      cmd += " --{0}={1}".format(key, val)
 
   return subprocess.Popen(cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
