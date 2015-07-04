@@ -1,7 +1,8 @@
 import unittest
 import json
+import cPickle
 
-from dat import Dat
+from dat import Dat, Dataset
 
 try:
   import pandas as pd
@@ -22,44 +23,43 @@ class DatTest(unittest.TestCase):
 class SimpleTest(DatTest):
 
   def test_insert_with_dataset(self):
-    version = self.dat.import_file("examples/contracts.csv", dataset="contracts")
+    dataset = Dataset(self.dat, 'contracts')
+    version = dataset.import_file("examples/contracts.csv")
     self.assertEqual(len(version), 64)
-    self.assertEqual(version, self.dat.version)
-    output = self.dat.export(dataset="contracts")
+    output = dataset.export()
     self.assertEqual(len(output), 770)
 
   def test_insert_with_abbr_dataset(self):
-    version = self.dat.import_file("examples/contracts.csv", d="contracts2")
+    dataset = Dataset(self.dat, 'contracts2')
+    version = dataset.import_file("examples/contracts.csv")
     self.assertEqual(len(version), 64)
-    self.assertEqual(version, self.dat.version)
-    output = self.dat.export(dataset="contracts2")
+    output = dataset.export()
     self.assertEqual(len(output), 770)
 
   def test_write_file(self):
-    version = self.dat.write_file("examples/blob.txt", dataset="blob_txt")
+    dataset = Dataset(self.dat, "blob_txt")
+    version = dataset.write_file("examples/blob.txt")
     self.assertEqual(len(version), 64)
-    self.assertEqual(version, self.dat.version)
-    output = self.dat.read("examples/blob.txt", dataset="blob_txt")
+    output = dataset.read("blob.txt")
     self.assertEqual(output, "hello world\n")
 
   def test_write_blob_from_python(self):
-    version = self.dat.write("hello world", "hello", dataset="blobs")
+    dataset = Dataset(self.dat, "blobs")
+    version = dataset.write("hello.txt", data="hello world")
     self.assertEqual(len(version), 64)
-    self.assertEqual(version, self.dat.version)
-    output = self.dat.read("hello", dataset="blobs")
-    self.assertEqual(output, "hello world")
+    self.assertEqual(dataset.read("hello.txt"), "hello world")
 
   def test_write_dict_from_python(self):
     my_python_object = {
       "hello": "world",
       "goodbye": "mars"
     }
+    dataset = Dataset(self.dat, "blobs")
     binary_data = json.dumps(my_python_object)
-    version = self.dat.write(binary_data, "helloworld_dict", dataset="blobs")
+    version = dataset.write("helloworld_dict", data=binary_data)
     self.assertEqual(len(version), 64)
-    self.assertEqual(version, self.dat.version)
 
-    out_data = self.dat.read("helloworld_dict", dataset="blobs")
+    out_data = dataset.read("helloworld_dict")
     output = json.loads(out_data)
     self.assertEqual(type(output), dict)
     self.assertEqual(output["hello"], "world")
@@ -69,13 +69,15 @@ class SimpleTest(DatTest):
       "hello": "mars",
       "goodbye": "world"
     }
-    version = self.dat.write_pickle(my_python_object, "helloworld_dict", dataset="blobs")
+    dataset = Dataset(self.dat, "blobs")
+    data = cPickle.dumps(my_python_object)
+    version = dataset.write("helloworld.pickle", data=data)
     self.assertEqual(len(version), 64)
-    self.assertEqual(version, self.dat.version)
 
-    output = self.dat.read_pickle("helloworld_dict", dataset="blobs")
-    self.assertEqual(type(output), dict)
-    self.assertEqual(output["hello"], "mars")
+    data = dataset.read("helloworld.pickle")
+    obj = cPickle.loads(data)
+    self.assertEqual(type(obj), dict)
+    self.assertEqual(obj["hello"], "mars")
 
 
 @unittest.skipIf(pd is False, "skipping pandas tests")
@@ -89,13 +91,14 @@ class TestPandas(DatTest):
     df['amtSpent'] = df['amtSpent'].str.replace(r'[$,]', '')
 
     # insert data
-    version = self.dat.import_dataframe(df, d="pandas")
+    dataset = Dataset(self.dat, "pandas")
+    version = dataset.import_dataframe(df)
     self.assertEqual(64, len(version))
 
-    output = self.dat.export(dataset="pandas")
+    output = dataset.export()
     self.assertEqual(len(output), 770)
 
-    df = self.dat.export_dataframe(dataset="pandas")
+    df = dataset.export_dataframe()
 
     # modify a column
     # create ranked column.
@@ -103,11 +106,11 @@ class TestPandas(DatTest):
     self.assertEquals(df.shape, (770, 13))
 
     # okay, put it back in dat
-    version = self.dat.import_dataframe(df, d="pandas", key="key")
+    version = dataset.import_dataframe(df, key="key")
     self.assertEqual(len(version), 64)
 
     # and get it back out
-    output = self.dat.export(dataset="pandas")
+    output = dataset.export()
     self.assertEqual(len(output), 770)
     df_with_rank = pd.DataFrame.from_dict(output)
 

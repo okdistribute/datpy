@@ -35,10 +35,10 @@ def clone(URL, path, **kwargs):
 
 class Dat:
 
-  def __init__(self, location=None):
-    if location:
-      subprocess.call(["cd", self.location])
-      self.location = location
+  def __init__(self, path=None):
+    if path:
+      subprocess.call(["cd", self.path])
+      self.path = path
 
     self.version = None
 
@@ -49,52 +49,74 @@ class Dat:
     self.version = version
     return subprocess.call(["dat checkout " + version], shell=True)
 
+  def push(self, URL, **kwargs):
+    return stream_out("dat push " + URL, kwargs, parse=False)
+
+  def pull(self, URL, **kwargs):
+    return stream_out("dat pull " + URL, kwargs, parse=False)
+
+  def clean(self):
+    return subprocess.call(["rm -rf .dat"], shell=True)
+
+class Dataset:
+
+  def __init__(self, dat, dataset, key=None):
+    self.dat = dat
+    self.dataset = dataset
+    self.key = key
+
   @returns_version
   def import_file(self, filename, **kwargs):
-    p = process("dat import " + filename, kwargs)
+    p = self.process("dat import " + filename, kwargs)
     return p.communicate()
 
   @returns_version
   def import_dataframe(self, dataframe, **kwargs):
     ## TODO: make streaming by using a generator
-    p = process("dat import -", kwargs)
-    stdout, stderr = stream_in(p, dataframe.to_csv(), parse=True)
+    if not kwargs['key']:
+      kwargs['key'] = self.key
+
+    p = self.process("dat import -", kwargs)
+    stdout, stderr = stream_in(p, dataframe.to_csv())
     return (stdout, stderr)
 
   @returns_version
-  def write(self, data, name, **kwargs):
-    p = process("dat write {0} -".format(name), kwargs)
-    stdout, stderr = stream_in(p, data, parse=False)
+  def write(self, filename, data=None, **kwargs):
+    if not data:
+      self.write_file(filename, **kwargs)
+
+    p = self.process("dat write {0} -".format(filename), kwargs)
+    stdout, stderr = stream_in(p, data)
     return (stdout, stderr)
 
   @returns_version
   def write_file(self, filename, **kwargs):
-    p = process("dat write " + filename, kwargs)
+    p = self.process("dat write " + filename, kwargs)
     return p.communicate()
 
-  def write_pickle(self, data, name, **kwargs):
-    data = cPickle.dumps(data)
-    return self.write(data, name, **kwargs)
+  def read(self, key, **kwargs):
+    p = self.process("dat read " + key, kwargs)
+    return stream_out(p, parse=False)
 
-  def read_pickle(self, name, **kwargs):
-    data = self.read(name, **kwargs)
-    return cPickle.loads(data)
-
-  def read(self, name, **kwargs):
-    return stream_out("dat read " + name, kwargs, parse=False)
-
-  def export_dataframe(self, dataset, **kwargs):
+  def export_dataframe(self, **kwargs):
     if not pd:
       raise Exception("Can't find pandas. Is it available on your path?")
 
-    output = self.export(dataset, **kwargs)
-    return pd.DataFrame.from_dict(output)
+    output = self.export(**kwargs)
+    frame = pd.DataFrame.from_dict(output['value'])
+    frame[self.key] = output[self.key]
+    return frame
 
-  def export(self, dataset, **kwargs):
-    return stream_out("dat export -d " + dataset, kwargs)
+  def export(self, **kwargs):
+    p = self.process("dat export", kwargs)
+    return stream_out(p)
 
-  def clean(self):
-    return subprocess.call(["rm -rf .dat"], shell=True)
+  def process(self, cmd, opts):
+    opts['dataset'] = self.dataset
+    if self.key:
+      opts['key'] = self.key
+
+    return process(cmd, opts)
 
 def process(cmd, opts):
   """
@@ -121,7 +143,7 @@ def process(cmd, opts):
 
   return subprocess.Popen(cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
-def stream_in(p, data, parse=True):
+def stream_in(p, data):
   """
   Streams to dat from the given command into python
 
@@ -139,7 +161,7 @@ def stream_in(p, data, parse=True):
   else:
     return out
 
-def stream_out(cmd, opts=None, parse=True):
+def stream_out(p, parse=True):
   """
   Streams the stdout from the given command into python
 
@@ -151,8 +173,6 @@ def stream_out(cmd, opts=None, parse=True):
     if true, will try to parse the output from json objects to
     python lists/dictionaries
   """
-  p = process(cmd, opts)
-
   if parse:
     res = []
     for line in iter(p.stdout.readline, ''):

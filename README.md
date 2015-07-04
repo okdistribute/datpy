@@ -28,7 +28,7 @@ This is a new library and it needs work! Please don't hesitate to send a pull re
 Here's a simple example of how to read a dat's data into a pandas object, and then update the dat accordingly after editing the values.
 
 ```python
-from datpy import Dat
+from datpy import Dat, Dataset
 import pandas as pd
 
 dat = Dat()
@@ -36,27 +36,33 @@ dat = Dat()
 ## initialize dat
 dat.init(tempdir())
 
+## create the dataset
+dataset = Dataset(dat, 'city_code')
 df = pd.read_csv('cities.csv')
 
-## uses the unique column 'city_code' to identify and version rows over time
-v1 = dat.import_dataframe(df, dataset="cities", key="city_code")
+## uses the unique column 'city_code' to identify and version rows
+v1 = dataset.import_dataframe(df, key="city_code")
 
-## get the data at a certain version
-data = dat.export(dataset="cities", checkout=v1)
-df_v1 = pd.DataFrame.from_dict(data)
+## should be the same as the initial dataset
+df = dataset.export_datafarme(checkout=v1)
 ```
 
 [An ipython notebook example for dat](http://nbviewer.ipython.org/github/pkafei/Dat-Python/blob/master/examples/Using%20Python%20with%20Dat.ipynb) (outdated)
 
-## datpy
+## datpy.Dat
 
-```
-pip install datpy
-```
+`Dat` is a class that binds to a Dat on your hard drive. Datasets are loaded streaming from the filesystem into python's memory.
+
+For very large datasets and for code in production, please refer to the [dat commandline documentation](https://github.com/maxogden/dat/blob/master/docs/cli-usage.md) for stable and memory-safe interaction.
 
 ```python
-import datpy
+> import datpy
+> mydat = datpy.Dat('./path/to/dat/repo')
+> mydat.init()
 ```
+
+For each command, a `dat` instance accepts any of the options supported by Dat's [commandline api](http://datproject.readthedocs.org/en/latest/cli-docs/)
+
 
 ### clone
 
@@ -87,23 +93,15 @@ Replicate dat updates from your peer. Defaults to the initial clone location.
 > mydat.pull()
 ```
 
-## Dat
+## datpy.Dataset
 
-`Dat` is a class that binds to a Dat on your hard drive. Datasets are loaded streaming from the filesystem into python's memory.
-
-For very large datasets and for code in production, please refer to the [dat commandline documentation](https://github.com/maxogden/dat/blob/master/docs/cli-usage.md) for stable and memory-safe interaction.
+Dataset-only commands must be performed using a dataset instance.
 
 ```python
-> import datpy
-> mydat = datpy.Dat('./path/to/dat/repo')
-> mydat.init()
+> dataset = datpy.Dataset(mydat, "contracts")
 ```
 
-For each command, a `dat` instance accepts any of the options supported by Dat's [commandline api](http://datproject.readthedocs.org/en/latest/cli-docs/)
-
-For example, ```dataset='mydataset'`` expands to `dat export --dataset=mydataset`
-
-### import_dataframe
+### dataset.import_dataframe
 
 Import rows from a pandas dataframe.
 
@@ -111,40 +109,16 @@ Returns the new version of the dat repository as a string.
 
 ```python
 > df = pd.read_csv('examples/contracts.csv')
-> mydat.import_dataframe(df, dataset="contracts", key='id')
+> dataset.import_dataframe(df, key='id')
 '0eafefda2bcfee5'
 ```
 
-### export_dataframe
+### dataset.export_dataframe
 
 Get data from the dat as a pandas dataframe.
 
 ```python
-df = mydat.export_dataframe(dataset="contracts", checkout='0eafefda2bcfee5')
-```
-
-### write_pickle
-
-Write any python data or object to dat as a cPickle, that is, as a compressed binary file on disk in the dat.
-
-Returns the new version of the dat repository as a string.
-
-```python
-> my_python_object = {
-  "hello": "mars",
-  "goodbye": "world"
-}
-> name = "hello_world"
-> mydat.write_pickle(my_python_object, name, dataset="blobs")
-'ba13bead12a0db'
-```
-
-### read_pickle
-
-Read a binary object from dat at a given version that has been stored as a python pickle.
-
-```python
-output = mydat.read_pickle(name, dataset="blobs", checkout='ba13bead12a0db')
+df = dataset.export_dataframe(checkout='0eafefda2bcfee5')
 ```
 
 #### import_file
@@ -154,7 +128,7 @@ Import rows from a tabular file into dat.
 Returns the new version of the dat repository as a string.
 
 ```python
-> mydat.import_file('tables/cities.csv', dataset='cities_data', key='cityId')
+> dataset.import_file('tables/cities.csv', key='cityId')
 'abc2f3d234abc234ef1g13d'
 ```
 
@@ -163,7 +137,7 @@ Returns the new version of the dat repository as a string.
 Get the rows in the dat. This returns a list of dictionaries, where each dictionary is the json representation of that row.
 
 ```python
-> mydat.export(checkout='abc2f3d234abc234ef1g13d')
+> dataset.export(checkout='abc2f3d234abc234ef1g13d')
 [
   {'key': 'abc2f3d234abc234ef1g13d',
   'vote_share': 51.33,
