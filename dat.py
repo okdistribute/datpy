@@ -49,14 +49,31 @@ class Dat:
     self.version = version
     return subprocess.call(["dat checkout " + version], shell=True)
 
-  def push(self, URL, **kwargs):
-    return stream_out("dat push " + URL, kwargs, parse=False)
+  def datasets(self, **kwargs):
+    p = process("dat datasets", kwargs)
+    return stream_out(p)
 
-  def pull(self, URL, **kwargs):
-    return stream_out("dat pull " + URL, kwargs, parse=False)
+  def destroy(self):
+    return subprocess.call(["dat destroy --no-prompt"], shell=True)
 
-  def clean(self):
-    return subprocess.call(["rm -rf .dat"], shell=True)
+  def status(self, **kwargs):
+    p = process("dat status", kwargs)
+    return stream_out(p)
+
+  def read(self, key, **kwargs):
+    p = process("dat read " + key, kwargs)
+    return stream_out(p, parse=False)
+
+  @returns_version
+  def write(self, filename, data=None, **kwargs):
+    p = process("dat write {0} -".format(filename), kwargs)
+    stdout, stderr = stream_in(p, data)
+    return (stdout, stderr)
+
+  @returns_version
+  def write_file(self, filename, **kwargs):
+    p = process("dat write " + filename, kwargs)
+    return p.communicate()
 
 class Dataset:
 
@@ -79,24 +96,6 @@ class Dataset:
     p = self.process("dat import -", kwargs)
     stdout, stderr = stream_in(p, dataframe.to_csv())
     return (stdout, stderr)
-
-  @returns_version
-  def write(self, filename, data=None, **kwargs):
-    if not data:
-      self.write_file(filename, **kwargs)
-
-    p = self.process("dat write {0} -".format(filename), kwargs)
-    stdout, stderr = stream_in(p, data)
-    return (stdout, stderr)
-
-  @returns_version
-  def write_file(self, filename, **kwargs):
-    p = self.process("dat write " + filename, kwargs)
-    return p.communicate()
-
-  def read(self, key, **kwargs):
-    p = self.process("dat read " + key, kwargs)
-    return stream_out(p, parse=False)
 
   def export_dataframe(self, **kwargs):
     if not pd:
@@ -178,6 +177,8 @@ def stream_out(p, parse=True):
     for line in iter(p.stdout.readline, ''):
       parsed = json.loads(line.rstrip())
       res.append(parsed)
+    if len(res) == 1:
+      res = res[0]
   else:
     res = ''
     for line in iter(p.stdout.readline, ''):

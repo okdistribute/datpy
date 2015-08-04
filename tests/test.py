@@ -18,9 +18,27 @@ class DatTest(unittest.TestCase):
 
   @classmethod
   def tearDownClass(cls):
-    cls.dat.clean()
+    cls.dat.destroy()
 
-class SimpleTest(DatTest):
+class IsolatedTest(DatTest):
+
+  def test_insert_with_dataset(self):
+    dataset = Dataset(self.dat, 'contracts')
+    version = dataset.import_file("examples/contracts.csv")
+    self.assertEqual(len(version), 64)
+    output = dataset.export()
+    self.assertEqual(len(output), 770)
+
+    status = self.dat.status()
+    self.assertEqual(status['datasets'], 2)
+    self.assertEqual(status['files'], 1)
+    #self.assertEqual(status['rows'], 770)
+
+    datasets = self.dat.datasets()
+    self.assertEqual(len(datasets), 1)
+    print datasets
+
+class IOTests(DatTest):
 
   def test_insert_with_dataset(self):
     dataset = Dataset(self.dat, 'contracts')
@@ -37,29 +55,26 @@ class SimpleTest(DatTest):
     self.assertEqual(len(output), 770)
 
   def test_write_file(self):
-    dataset = Dataset(self.dat, "blob_txt")
-    version = dataset.write_file("examples/blob.txt")
+    version = self.dat.write_file("examples/blob.txt")
     self.assertEqual(len(version), 64)
-    output = dataset.read("blob.txt")
+    output = self.dat.read("blob.txt")
     self.assertEqual(output, "hello world\n")
 
   def test_write_blob_from_python(self):
-    dataset = Dataset(self.dat, "blobs")
-    version = dataset.write("hello.txt", data="hello world")
+    version = self.dat.write("hello.txt", data="hello world")
     self.assertEqual(len(version), 64)
-    self.assertEqual(dataset.read("hello.txt"), "hello world")
+    self.assertEqual(self.dat.read("hello.txt"), "hello world")
 
   def test_write_dict_from_python(self):
     my_python_object = {
       "hello": "world",
       "goodbye": "mars"
     }
-    dataset = Dataset(self.dat, "blobs")
     binary_data = json.dumps(my_python_object)
-    version = dataset.write("helloworld_dict", data=binary_data)
+    version = self.dat.write("helloworld_dict", data=binary_data)
     self.assertEqual(len(version), 64)
 
-    out_data = dataset.read("helloworld_dict")
+    out_data = self.dat.read("helloworld_dict")
     output = json.loads(out_data)
     self.assertEqual(type(output), dict)
     self.assertEqual(output["hello"], "world")
@@ -69,12 +84,11 @@ class SimpleTest(DatTest):
       "hello": "mars",
       "goodbye": "world"
     }
-    dataset = Dataset(self.dat, "blobs")
     data = cPickle.dumps(my_python_object)
-    version = dataset.write("helloworld.pickle", data=data)
+    version = self.dat.write("helloworld.pickle", data=data)
     self.assertEqual(len(version), 64)
 
-    data = dataset.read("helloworld.pickle")
+    data = self.dat.read("helloworld.pickle")
     obj = cPickle.loads(data)
     self.assertEqual(type(obj), dict)
     self.assertEqual(obj["hello"], "mars")

@@ -31,20 +31,21 @@ Here's a simple example of how to read a dat's data into a pandas object, and th
 from datpy import Dat, Dataset
 import pandas as pd
 
+dataframe = pd.read_csv('cities.csv')
+
 dat = Dat()
 
 ## initialize dat
 dat.init(tempdir())
 
 ## create the dataset
-dataset = Dataset(dat, 'city_code')
-df = pd.read_csv('cities.csv')
+dataset = Dataset(dat, 'city_codes')
 
 ## uses the unique column 'city_code' to identify and version rows
-v1 = dataset.import_dataframe(df, key="city_code")
+v1 = dataset.import_dataframe(dataframe, key="city_codes")
 
-## should be the same as the initial dataset
-df = dataset.export_datafarme(checkout=v1)
+## Get the data later at that version:
+df = dataset.export_dataframe(checkout=v1)
 ```
 
 [An ipython notebook example for dat](http://nbviewer.ipython.org/github/pkafei/Dat-Python/blob/master/examples/Using%20Python%20with%20Dat.ipynb) (outdated)
@@ -75,22 +76,6 @@ Example:
 ```python
 > import datpy
 > mydat = datpy.clone('ssh://karissa@mydat.edu:/user/mydats/cities', "./cities")
-```
-
-### push
-
-Push the dat somewhere. Defaults to the initial clone location.
-
-```python
-> mydat.push()
-```
-
-### pull
-
-Replicate dat updates from your peer. Defaults to the initial clone location.
-
-```python
-> mydat.pull()
 ```
 
 ## datpy.Dataset
