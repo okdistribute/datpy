@@ -51,7 +51,8 @@ class Dat:
 
   def datasets(self, **kwargs):
     p = process("dat datasets", kwargs)
-    return stream_out(p)
+    res = stream_out(p)
+    return res['datasets']
 
   def destroy(self):
     return subprocess.call(["dat destroy --no-prompt"], shell=True)

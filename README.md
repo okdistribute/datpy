@@ -17,7 +17,7 @@ Read the [docs](https://github.com/maxogden/dat) to learn more about Dat.
 
   1. Install pip
 
-  2. Obtain the Python DAT package
+  2. Obtain the Python dat package
 
     `pip install datpy`
 

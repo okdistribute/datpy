@@ -2,7 +2,7 @@ import unittest
 import json
 import cPickle
 
-from dat import Dat, Dataset
+from datpy import Dat, Dataset
 
 try:
   import pandas as pd
@@ -35,8 +35,10 @@ class IsolatedTest(DatTest):
     #self.assertEqual(status['rows'], 770)
 
     datasets = self.dat.datasets()
-    self.assertEqual(len(datasets), 1)
-    print datasets
+    self.assertEqual(len(datasets), 2)
+    self.assertTrue('files' in datasets)
+    self.assertTrue('contracts' in datasets)
+
 
 class IOTests(DatTest):
 
