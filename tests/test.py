@@ -39,7 +39,6 @@ class IsolatedTest(DatTest):
     self.assertTrue('files' in datasets)
     self.assertTrue('contracts' in datasets)
 
-
 class IOTests(DatTest):
 
   def test_insert_with_dataset(self):
@@ -49,12 +48,10 @@ class IOTests(DatTest):
     output = dataset.export()
     self.assertEqual(len(output), 770)
 
-  def test_insert_with_abbr_dataset(self):
+  def test_insert_with_bad_path_fails(self):
     dataset = Dataset(self.dat, 'contracts2')
-    version = dataset.import_file("examples/contracts.csv")
-    self.assertEqual(len(version), 64)
-    output = dataset.export()
-    self.assertEqual(len(output), 770)
+    with self.assertRaises(Exception):
+        dataset.import_file("not-a-file.csv")
 
   def test_write_file(self):
     version = self.dat.write_file("examples/blob.txt")
@@ -115,6 +112,8 @@ class TestPandas(DatTest):
     self.assertEqual(len(output), 770)
 
     df = dataset.export_dataframe()
+    keys = dataset.keys()
+    df['key'] = pd.Series(keys)
 
     # modify a column
     # create ranked column.
@@ -122,7 +121,7 @@ class TestPandas(DatTest):
     self.assertEquals(df.shape, (770, 13))
 
     # okay, put it back in dat
-    version = dataset.import_dataframe(df, key="key")
+    version = dataset.import_dataframe(df, key='key')
     self.assertEqual(len(version), 64)
 
     # and get it back out

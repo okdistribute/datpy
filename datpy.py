@@ -12,99 +12,102 @@ try:
 except:
   pd = False
 
+def on_error(log):
+  message = log.get('message')
+  if not message:
+    message = 'Unknown error. Please contact us at #dat in freenode on irc'
+  raise Exception('Error: ' + message)
+
 def returns_version(func):
   def inner(*args, **kwargs):
-    stdout, stderr = func(*args, **kwargs)
-    log = json.loads(stdout)
     self = args[0]
-    self.version = log["version"]
+    log = func(*args, **kwargs)
+    self.version = log.get("version")
+    if not self.version:
+      on_error(log)
     return self.version
 
   return inner
 
-def clone(URL, path, **kwargs):
-  """
-  Parameters
-  """
-  p = process("dat clone {0} {1}".format(URL, path), kwargs)
-  stdout, stderr = p.communicate()
-  if (p.returncode == 0):
-    return Dat(path)
-  else:
-   return p.returncode
-
 class Dat:
 
   def __init__(self, path=None):
-    if path:
-      subprocess.call(["cd", self.path])
-      self.path = path
-
+    self.path = path
     self.version = None
 
-  def init(self):
-    return subprocess.call(["dat init --no-prompt"], shell=True)
+  def init(self, **kwargs):
+    p = self.process("dat init --no-prompt", kwargs)
+    return stream_out(p)
 
-  def checkout(self, version):
+  def checkout(self, version, **kwargs):
     self.version = version
-    return subprocess.call(["dat checkout " + version], shell=True)
+    p = self.process("dat checkout " + version, kwargs)
+    return stream_out(p)
 
   def datasets(self, **kwargs):
-    p = process("dat datasets", kwargs)
+    p = self.process("dat datasets", kwargs)
     res = stream_out(p)
     return res['datasets']
 
-  def destroy(self):
-    return subprocess.call(["dat destroy --no-prompt"], shell=True)
+  def destroy(self, **kwargs):
+    p = self.process("dat destroy --no-prompt", kwargs)
+    return stream_out(p)
 
   def status(self, **kwargs):
-    p = process("dat status", kwargs)
+    p = self.process("dat status", kwargs)
     return stream_out(p)
 
   def read(self, key, **kwargs):
-    p = process("dat read " + key, kwargs)
+    p = self.process("dat read " + key, kwargs)
     return stream_out(p, parse=False)
 
   @returns_version
   def write(self, filename, data=None, **kwargs):
-    p = process("dat write {0} -".format(filename), kwargs)
-    stdout, stderr = stream_in(p, data)
-    return (stdout, stderr)
+    p = self.process("dat write {0} -".format(filename), kwargs)
+    return stream_in(p, data)
 
   @returns_version
   def write_file(self, filename, **kwargs):
-    p = process("dat write " + filename, kwargs)
-    return p.communicate()
+    p = self.process("dat write " + filename, kwargs)
+    return stream_out(p)
+
+  def process(self, cmd, opts):
+    if self.path:
+      opts['path'] = self.path
+
+    return process(cmd, opts)
+
+  def dataset(self, name):
+    return Dataset(self, name)
 
 class Dataset:
 
-  def __init__(self, dat, dataset, key=None):
+  def __init__(self, dat, dataset):
     self.dat = dat
     self.dataset = dataset
-    self.key = key
+
+  def keys(self, **kwargs):
+    p = self.process("dat keys", kwargs)
+    res = stream_out(p)
+    return res['keys']
 
   @returns_version
   def import_file(self, filename, **kwargs):
     p = self.process("dat import " + filename, kwargs)
-    return p.communicate()
+    return stream_out(p)
 
   @returns_version
   def import_dataframe(self, dataframe, **kwargs):
-    ## TODO: make streaming by using a generator
-    if not kwargs['key']:
-      kwargs['key'] = self.key
-
+    ## TODO: make streaming better by using a generator
     p = self.process("dat import -", kwargs)
-    stdout, stderr = stream_in(p, dataframe.to_csv())
-    return (stdout, stderr)
+    return stream_in(p, dataframe.to_csv())
 
   def export_dataframe(self, **kwargs):
     if not pd:
       raise Exception("Can't find pandas. Is it available on your path?")
 
     output = self.export(**kwargs)
-    frame = pd.DataFrame.from_dict(output['value'])
-    frame[self.key] = output[self.key]
+    frame = pd.DataFrame.from_dict(output)
     return frame
 
   def export(self, **kwargs):
@@ -112,9 +115,10 @@ class Dataset:
     return stream_out(p)
 
   def process(self, cmd, opts):
+    if self.dat.path:
+      opts['path'] = self.dat.path
+
     opts['dataset'] = self.dataset
-    if self.key:
-      opts['key'] = self.key
 
     return process(cmd, opts)
 
@@ -155,11 +159,14 @@ def stream_in(p, data):
     TODO: if true, will try to parse the output from python generator or list
 
   """
-  out = p.communicate(input=data)
+  stdout, stderr = p.communicate(input=data)
   if p.returncode == 1:
-    raise Exception(out[1])
+    raise Exception('Node.js error: ' + stderr)
   else:
-    return out
+    res = json.loads(stdout)
+    if res.get('error'):
+      return on_error(res)
+    return res
 
 def stream_out(p, parse=True):
   """
@@ -170,20 +177,23 @@ def stream_out(p, parse=True):
   cmd: str
     the command to execute
   parse: boolean
-    if true, will try to parse the output from json objects to
-    python lists/dictionaries
+    to parse the file into json
   """
-  if parse:
-    res = []
-    for line in iter(p.stdout.readline, ''):
-      parsed = json.loads(line.rstrip())
-      res.append(parsed)
-    if len(res) == 1:
-      res = res[0]
-  else:
-    res = ''
-    for line in iter(p.stdout.readline, ''):
-      res += line
+  res = []
+  for line in iter(p.stdout.readline, ''):
+    if parse:
+      line = json.loads(line.rstrip())
+    else:
+      line = line
+    res.append(line)
+
+  if len(res) == 1:
+    res = res[0]
+    if type(res) == object and res.get('error'):
+      return on_error(res)
+
+  if not parse:
+    res = ''.join(res)
 
   subprocess.Popen.terminate(p)
   return res
