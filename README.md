@@ -169,7 +169,16 @@ nosetests test.py:SimpleTest.test_rows
 To run the entire suite without `nosetests`:
 
 ```bash
-python test.py
+python tests/test.py
+```
+
+## Publishing
+
+First, edit `setup.py` to bump the version number on both the `version` key and the `download_url`. Then, to push to pip/pypi:
+
+```
+python setup.py register -r pypi
+python setup.py sdist upload -r pypi
 ```
 
 
