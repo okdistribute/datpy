@@ -12,11 +12,14 @@ try:
 except:
   pd = False
 
+class DatException(Exception):
+  pass
+
 def on_error(log):
   message = log.get('message')
   if not message:
     message = 'Unknown error. Please contact us at #dat in freenode on irc'
-  raise Exception('Error: ' + message)
+  raise DatException('Error: ' + message)
 
 def returns_version(func):
   def inner(*args, **kwargs):
@@ -161,10 +164,10 @@ def stream_in(p, data):
   """
   stdout, stderr = p.communicate(input=data)
   if p.returncode == 1:
-    raise Exception('Node.js error: ' + stderr)
+    raise DatException('Node.js error: ' + stderr)
   else:
     res = json.loads(stdout)
-    if res.get('error'):
+    if type(res) === object and res.get('error'):
       return on_error(res)
     return res
 
