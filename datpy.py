@@ -167,7 +167,7 @@ def stream_in(p, data):
     raise DatException('Node.js error: ' + stderr)
   else:
     res = json.loads(stdout)
-    if type(res) === object and res.get('error'):
+    if type(res) == object and res.get('error'):
       return on_error(res)
     return res
 
