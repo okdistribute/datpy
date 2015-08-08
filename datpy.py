@@ -1,6 +1,9 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
+import pickle
 import subprocess
 import time
-import cPickle
 
 try:
   import ujson as json
@@ -42,7 +45,8 @@ def clone(URL, path=None, **kwargs):
   out = stream_out(p)
   return Dat(path)
 
-class Dat:
+
+class Dat(object):
 
   def __init__(self, path=None):
     self.path = path
@@ -93,7 +97,7 @@ class Dat:
   def dataset(self, name):
     return Dataset(self, name)
 
-class Dataset:
+class Dataset(object):
 
   def __init__(self, dat, dataset):
     self.dat = dat
@@ -160,7 +164,7 @@ def process(cmd, opts):
 
   cmd += ' --json '
 
-  for key, val in opts.iteritems():
+  for key, val in opts.items():
     if (len(key) == 1):
       cmd += " -{0} {1}".format(key, val)
     else:
@@ -190,7 +194,7 @@ def stream_in(p, data):
   else:
     try:
       res = json.loads(stdout)
-      if type(res) == object and res.get('error'):
+      if type(res) == dict and res.get('error'):
         return on_error(res)
     except ValueError:
       res = {'stdout': stdout, 'stderr': stderr}

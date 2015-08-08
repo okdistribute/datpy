@@ -1,6 +1,9 @@
-import unittest
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 import json
-import cPickle
+import pickle
+import unittest
 
 import datpy
 
@@ -40,7 +43,7 @@ class IsolatedTest(DatTest):
     dat.destroy()
 
     datasets = self.dat.datasets()
-    self.assertEqual(len(datasets), 1)
+    self.assertEqual(len(datasets), 2)
     self.assertTrue('files' in datasets)
     self.assertTrue('contracts' in datasets)
 
@@ -89,12 +92,12 @@ class IOTests(DatTest):
       "hello": "mars",
       "goodbye": "world"
     }
-    data = cPickle.dumps(my_python_object)
+    data = pickle.dumps(my_python_object)
     version = self.dat.write("helloworld.pickle", data=data)
     self.assertEqual(len(version), 64)
 
     data = self.dat.read("helloworld.pickle")
-    obj = cPickle.loads(data)
+    obj = pickle.loads(data)
     self.assertEqual(type(obj), dict)
     self.assertEqual(obj["hello"], "mars")
 
