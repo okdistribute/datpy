@@ -184,6 +184,8 @@ def stream_in(p, data):
     TODO: if true, will try to parse the output from python generator or list
 
   """
+  if isinstance(data, str):
+    data = data.encode()
   stdout, stderr = p.communicate(input=data)
   if p.returncode == 1:
     raise DatException('Node.js error: ' + stderr)
@@ -193,7 +195,7 @@ def stream_in(p, data):
                    "Check http://dat-data.com for instructions")
   else:
     try:
-      res = json.loads(stdout)
+      res = json.loads(stdout.decode())
       if type(res) == dict and res.get('error'):
         return on_error(res)
     except ValueError:
@@ -213,11 +215,11 @@ def stream_out(p, parse=True):
     to parse the file into json
   """
   res = []
-  for line in iter(p.stdout.readline, ''):
+  for line in iter(p.stdout.readline, b''):
     if parse:
-      line = json.loads(line.rstrip())
+      line = json.loads(line.decode().rstrip())
     else:
-      line = line
+      line = line.decode()
     res.append(line)
 
   if len(res) == 1:
