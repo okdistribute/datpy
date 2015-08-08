@@ -30,7 +30,7 @@ class IsolatedTest(DatTest):
     self.assertEqual(len(output), 770)
 
     status = self.dat.status()
-    self.assertEqual(status['datasets'], 2)
+    self.assertEqual(status['datasets'], 1)
     self.assertEqual(status['files'], 1)
     #self.assertEqual(status['rows'], 770)
 
