@@ -28,18 +28,18 @@ This is a new library and it needs work! Please don't hesitate to send a pull re
 Here's a simple example of how to read a dat's data into a pandas object, and then update the dat accordingly after editing the values.
 
 ```python
-from datpy import Dat, Dataset
+import datpy
 import pandas as pd
 
 dataframe = pd.read_csv('cities.csv')
 
-dat = Dat()
+dat = datpy.Dat()
 
 ## initialize dat
 dat.init(tempdir())
 
-## create the dataset
-dataset = Dataset(dat, 'city_codes')
+## get a dataset (like a table or hdf5 dataframe)
+dataset = dat.dataset('city_codes')
 
 ## uses the unique column 'city_code' to identify and version rows
 v1 = dataset.import_dataframe(dataframe, key="city_codes")
@@ -83,7 +83,7 @@ Example:
 Dataset-only commands must be performed using a dataset instance.
 
 ```python
-> dataset = datpy.Dataset(mydat, "contracts")
+> dataset = mydat.dataset("contracts")
 ```
 
 ### dataset.import_dataframe
