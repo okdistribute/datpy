@@ -3,7 +3,7 @@ import setuptools
 
 setup(
   name = 'datpy',
-  version = '0.5.3',
+  version = '0.6.0',
   py_modules=['datpy'],
   description = 'Python dough for making Dat-flavored pies',
   author = 'Karissa McKelvey',
