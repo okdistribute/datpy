@@ -28,14 +28,15 @@ class IsolatedTest(DatTest):
     self.assertEqual(len(version), 64)
     output = dataset.export()
     self.assertEqual(len(output), 770)
+    self.assertTrue('amtSpent' in output[0])
 
     status = self.dat.status()
-    self.assertEqual(status['datasets'], 2)
+    self.assertEqual(status['datasets'], 1)
     self.assertEqual(status['files'], 1)
     #self.assertEqual(status['rows'], 770)
 
     datasets = self.dat.datasets()
-    self.assertEqual(len(datasets), 2)
+    self.assertEqual(len(datasets), 1)
     self.assertTrue('files' in datasets)
     self.assertTrue('contracts' in datasets)
 
@@ -112,8 +113,6 @@ class TestPandas(DatTest):
     self.assertEqual(len(output), 770)
 
     df = dataset.export_dataframe()
-    keys = dataset.keys()
-    df['key'] = pd.Series(keys)
 
     # modify a column
     # create ranked column.

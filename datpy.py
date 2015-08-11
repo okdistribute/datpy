@@ -114,8 +114,14 @@ class Dataset:
     return frame
 
   def export(self, **kwargs):
+    kwargs['full'] = True
     p = self.process("dat export", kwargs)
-    return stream_out(p)
+    output = stream_out(p)
+    res = []
+    for row in output:
+      row['value']['key'] = row['key']
+      res.append(row['value'])
+    return res
 
   def process(self, cmd, opts):
     if self.dat.path:
