@@ -232,6 +232,7 @@ def stream_out(p, parse=True):
         line = json.loads(line.rstrip())
     except UnicodeDecodeError:
       line = pickle.loads(line)
+      parse = True
     res.append(line)
 
   if len(res) == 1:
