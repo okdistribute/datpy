@@ -121,10 +121,13 @@ class Dataset(object):
     return stream_out(p)
 
   @returns_version
-  def import_dataframe(self, dataframe, **kwargs):
+  def import_dataframe(self, dataframe, index=False, **kwargs):
     ## TODO: make streaming better by using a generator
     p = self.process("dat import -", kwargs)
-    return stream_in(p, dataframe.to_csv())
+    if index:
+      # TODO: use index as key
+      pass
+    return stream_in(p, dataframe.to_csv(index=index))
 
   def export_dataframe(self, **kwargs):
     if not pd:
