@@ -97,7 +97,10 @@ class IOTests(DatTest):
     self.assertEqual(len(version), 64)
 
     data = self.dat.read("helloworld.pickle")
-    obj = pickle.loads(data)
+    if isinstance(data, dict):
+        obj = data
+    else:
+        obj = pickle.loads(data)
     self.assertEqual(type(obj), dict)
     self.assertEqual(obj["hello"], "mars")
 
