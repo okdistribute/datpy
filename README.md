@@ -15,7 +15,7 @@ Read the [docs](https://github.com/maxogden/dat) to learn more about Dat.
 
 ## Installation
 
-  0. Install[dat](https://github.com/maxogden/dat)
+  0. Install [dat](https://github.com/maxogden/dat)
 
   1. Install pip
 
