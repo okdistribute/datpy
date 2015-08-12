@@ -128,7 +128,7 @@ class TestPandas(DatTest):
     # modify a column
     # create ranked column.
     df['amtSpentRank'] = df['amtSpent'].rank()
-    self.assertEquals(df.shape, (770, 13))
+    self.assertEquals(df.shape, (770, 12))
 
     # okay, put it back in dat
     version = dataset.import_dataframe(df, key='key')
@@ -141,7 +141,7 @@ class TestPandas(DatTest):
 
     # get the new data in a data frame.
     # we should see the updated data and new column there.
-    self.assertEquals(df_with_rank.shape, (770, 13))
+    self.assertEquals(df_with_rank.shape, (770, 12))
 
     # do some type conversion
     # TODO: save dtypes and automagically parse them for the python user
@@ -149,6 +149,24 @@ class TestPandas(DatTest):
     df_with_rank['amtSpentRank'] = df_with_rank['amtSpentRank'].astype('float')
 
     self.assertTrue(df_with_rank['amtSpentRank'].equals(df['amtSpentRank']))
+
+  def test_pandas_index(self):
+    # clean column, turn into float
+    df = pd.read_csv('examples/contracts.csv')
+    df['amtSpent'] = df['amtSpent'].str.replace(r'[$,]', '')
+    self.assertEquals(df.shape, (770, 10))
+
+    # insert data
+    dataset = self.dat.dataset("pandas_index")
+    version = dataset.import_dataframe(df, index=True)
+
+    # check out dict, should use index as key
+    output = dataset.export()
+    self.assertEqual(len(output[0].items()), 11)
+
+    df = dataset.export_dataframe()
+    self.assertEquals(df.shape, (770, 11))
+
 
 if __name__ == '__main__':
   unittest.main()
