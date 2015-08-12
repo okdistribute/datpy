@@ -3,13 +3,13 @@ import setuptools
 
 setup(
   name = 'datpy',
-  version = '0.6.0',
+  version = '0.7.0',
   py_modules=['datpy'],
   description = 'Python dough for making Dat-flavored pies',
   author = 'Karissa McKelvey',
   author_email = 'krmckelv@gmail.com',
   url = 'http://dat-data.com',
-  download_url = 'https://github.com/karissa/datpy/tarball/0.5.3',
+  download_url = 'https://github.com/karissa/datpy/tarball/0.7.0',
   keywords = ['dat', 'python', 'analytics', 'data sharing'],
   classifiers = []
 )
