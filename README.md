@@ -15,6 +15,8 @@ Read the [docs](https://github.com/maxogden/dat) to learn more about Dat.
 
 ## Installation
 
+  0. Install[dat](https://github.com/maxogden/dat)
+
   1. Install pip
 
   2. Obtain the Python dat package
@@ -69,7 +71,7 @@ For each command, a `dat` instance accepts any of the options supported by Dat's
 
 Clones the dat into a local directory on your filesystem.
 
-`datpy.clone(URL, path, **kwargs*)`
+`datpy.clone(URL, path=None, **kwargs*)`
 
 Example:
 

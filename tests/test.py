@@ -2,7 +2,7 @@ import unittest
 import json
 import cPickle
 
-from datpy import Dat, Dataset
+import datpy
 
 try:
   import pandas as pd
@@ -13,7 +13,7 @@ class DatTest(unittest.TestCase):
 
   @classmethod
   def setUpClass(cls):
-    cls.dat = Dat()
+    cls.dat = datpy.Dat('.')
     cls.dat.init()
 
   @classmethod
@@ -23,7 +23,7 @@ class DatTest(unittest.TestCase):
 class IsolatedTest(DatTest):
 
   def test_insert_with_dataset(self):
-    dataset = Dataset(self.dat, 'contracts')
+    dataset = self.dat.dataset('contracts')
     version = dataset.import_file("examples/contracts.csv")
     self.assertEqual(len(version), 64)
     output = dataset.export()
@@ -35,22 +35,27 @@ class IsolatedTest(DatTest):
     self.assertEqual(status['files'], 1)
     #self.assertEqual(status['rows'], 770)
 
+    dat = datpy.clone('.', 'test')
+    self.assertEqual(status, dat.status())
+    dat.destroy()
+
     datasets = self.dat.datasets()
     self.assertEqual(len(datasets), 1)
     self.assertTrue('files' in datasets)
     self.assertTrue('contracts' in datasets)
 
+
 class IOTests(DatTest):
 
   def test_insert_with_dataset(self):
-    dataset = Dataset(self.dat, 'contracts')
+    dataset = self.dat.dataset('contracts')
     version = dataset.import_file("examples/contracts.csv")
     self.assertEqual(len(version), 64)
     output = dataset.export()
     self.assertEqual(len(output), 770)
 
   def test_insert_with_bad_path_fails(self):
-    dataset = Dataset(self.dat, 'contracts2')
+    dataset = self.dat.dataset('contracts2')
     with self.assertRaises(Exception):
         dataset.import_file("not-a-file.csv")
 
@@ -105,7 +110,7 @@ class TestPandas(DatTest):
     df['amtSpent'] = df['amtSpent'].str.replace(r'[$,]', '')
 
     # insert data
-    dataset = Dataset(self.dat, "pandas")
+    dataset = self.dat.dataset("pandas")
     version = dataset.import_dataframe(df)
     self.assertEqual(64, len(version))
 

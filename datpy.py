@@ -32,6 +32,16 @@ def returns_version(func):
 
   return inner
 
+def clone(URL, path=None, **kwargs):
+  """
+  Parameters
+  """
+  if not path:
+    path = ''
+  p = process("dat clone {0} {1}".format(URL, path), kwargs)
+  out = stream_out(p)
+  return Dat(path)
+
 class Dat:
 
   def __init__(self, path=None):
@@ -171,6 +181,10 @@ def stream_in(p, data):
   stdout, stderr = p.communicate(input=data)
   if p.returncode == 1:
     raise DatException('Node.js error: ' + stderr)
+  elif p.returncode == 127:
+    raise DatException("It looks like `dat` commandline is missing from PATH.\n",
+                   "Are you sure you installed it?\n"
+                   "Check http://dat-data.com for instructions")
   else:
     try:
       res = json.loads(stdout)
@@ -202,7 +216,7 @@ def stream_out(p, parse=True):
 
   if len(res) == 1:
     res = res[0]
-    if type(res) == object and res.get('error'):
+    if type(res) == dict and res.get('error'):
       return on_error(res)
 
   if not parse:
