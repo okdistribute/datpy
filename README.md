@@ -1,8 +1,10 @@
 # DAT Python API
 
-This is a client in python for [Dat](https://dat-data.com). There are functions to interact with the REST api as well as local hooks. It integrates easily with [pandas](http://pandas.pydata.org).
+This is a client in python for [Dat](https://dat-data.com)'s commandline API. It integrates easily with [pandas](http://pandas.pydata.org).
 
-Hello, collaboration.
+[![pypi](https://img.shields.io/pypi/dm/datpy.svg?style=flat)](https://pypi.python.org/pypi/datpy)
+[![pypi](https://img.shields.io/pypi/v/datpy.svg?style=flat)](https://pypi.python.org/pypi/datpy)
+[![pypi](https://img.shields.io/pypi/pyversions/datpy.svg?style=flat)](https://pypi.python.org/pypi/datpy)
 
 ## What is Dat?
 
@@ -24,6 +26,8 @@ Read the [docs](https://github.com/maxogden/dat) to learn more about Dat.
     `pip install datpy`
 
 ## Usage
+
+
 
 This is a new library and it needs work! Please don't hesitate to send a pull request or to open an issue if you find something wrong or broken. It's probably because we messed up!
 
