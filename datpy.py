@@ -226,10 +226,12 @@ def stream_out(p, parse=True):
   """
   res = []
   for line in iter(p.stdout.readline, b''):
-    if parse:
-      line = json.loads(line.decode().rstrip())
-    else:
+    try:
       line = line.decode()
+      if parse:
+        line = json.loads(line.rstrip())
+    except UnicodeDecodeError:
+      line = pickle.loads(line)
     res.append(line)
 
   if len(res) == 1:
