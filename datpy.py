@@ -175,7 +175,7 @@ def process(cmd, opts):
     else:
       cmd += " --{0}={1}".format(key, val)
 
-  current_version = subprocess.check_output(['dat -v'], shell=True).strip()
+  current_version = subprocess.check_output(['dat -v'], shell=True).decode().strip()
   if parse_version(current_version) < parse_version(COMPATIBLE_DAT_VERSION):
     raise DatException("Please update the dat version with npm install -g dat.",
                     "Your version is {0}, this datpy requires {1}".format(current_version, COMPATIBLE_DAT_VERSION))
