@@ -102,7 +102,9 @@ class Dataset:
   def keys(self, **kwargs):
     p = self.process("dat keys", kwargs)
     res = stream_out(p)
-    return res['keys']
+    if 'keys' in res:
+      return res['keys']
+    return res
 
   @returns_version
   def import_file(self, filename, **kwargs):
