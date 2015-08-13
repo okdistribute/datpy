@@ -8,7 +8,6 @@ before_install:
     - nvm install 0.12
     - nvm use 0.12
 install:
-    - pip install numpy pandas
     - npm install -g dat
 script:
     - python setup.py test
