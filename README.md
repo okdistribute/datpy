@@ -2,11 +2,10 @@
 
 This is a client in python for [Dat](https://dat-data.com)'s commandline API. It integrates easily with [pandas](http://pandas.pydata.org).
 
+[![travis](https://img.shields.io/travis/karissa/datpy.svg?style=flat)](https://travis-ci.org/karissa/datpy)
 [![pypi](https://img.shields.io/pypi/dm/datpy.svg?style=flat)](https://pypi.python.org/pypi/datpy)
 [![pypi](https://img.shields.io/pypi/v/datpy.svg?style=flat)](https://pypi.python.org/pypi/datpy)
 [![pypi](https://img.shields.io/pypi/pyversions/datpy.svg?style=flat)](https://pypi.python.org/pypi/datpy)
-[![pypi](https://img.shields.io/pypi/travis/karissa/datpy.svg?style=flat)]](https://travis-ci.org/karissa/datpy)
-
 ## What is Dat?
 
 Dat is a open data project designed to make data more accessible:
