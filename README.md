@@ -5,6 +5,7 @@ This is a client in python for [Dat](https://dat-data.com)'s commandline API. It
 [![pypi](https://img.shields.io/pypi/dm/datpy.svg?style=flat)](https://pypi.python.org/pypi/datpy)
 [![pypi](https://img.shields.io/pypi/v/datpy.svg?style=flat)](https://pypi.python.org/pypi/datpy)
 [![pypi](https://img.shields.io/pypi/pyversions/datpy.svg?style=flat)](https://pypi.python.org/pypi/datpy)
+[![pypi](https://img.shields.io/pypi/travis/karissa/datpy.svg?style=flat)]](https://travis-ci.org/karissa/datpy)
 
 ## What is Dat?
 
