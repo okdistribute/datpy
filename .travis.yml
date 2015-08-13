@@ -9,5 +9,6 @@ before_install:
     - nvm use 0.12
 install:
     - npm install -g dat
+    - python setup.py install
 script:
     - python setup.py test
