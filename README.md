@@ -19,6 +19,8 @@ Read the [docs](https://github.com/maxogden/dat) to learn more about Dat.
 
   0. Install [dat](https://github.com/maxogden/dat)
 
+    `npm install -g dat`
+
   1. Install pip
 
   2. Obtain the Python dat package
@@ -26,8 +28,6 @@ Read the [docs](https://github.com/maxogden/dat) to learn more about Dat.
     `pip install datpy`
 
 ## Usage
-
-
 
 This is a new library and it needs work! Please don't hesitate to send a pull request or to open an issue if you find something wrong or broken. It's probably because we messed up!
 
