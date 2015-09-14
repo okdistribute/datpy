@@ -17,8 +17,7 @@ except:
   pd = False
 
 
-COMPATIBLE_DAT_VERSION = '7.0.3'
-
+COMPATIBLE_DAT_VERSION = '7.1.0'
 
 class DatException(Exception):
   pass
