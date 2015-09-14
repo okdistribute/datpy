@@ -103,9 +103,12 @@ class Dat(object):
 
 class Dataset(object):
 
-  def __init__(self, dat, dataset):
+  def __init__(self, dat, dataset, key=False):
     self.dat = dat
     self.dataset = dataset
+    self.key = key
+    if not self.key:
+      self.key = 'key'
 
   def keys(self, **kwargs):
     p = self.process("dat keys", kwargs)
@@ -122,6 +125,9 @@ class Dataset(object):
   @returns_version
   def import_dataframe(self, dataframe, **kwargs):
     ## TODO: make streaming better by using a generator
+    key = kwargs.get('key')
+    if key:
+      self.key = key
     p = self.process("dat import -", kwargs)
     return stream_in(p, dataframe.to_csv())
 
@@ -139,7 +145,7 @@ class Dataset(object):
     output = stream_out(p)
     res = []
     for row in output:
-      row['value']['key'] = row['key']
+      row['value'][self.key] = row['key']
       res.append(row['value'])
     return res
 
