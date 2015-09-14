@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='datpy',
-    version='0.7.0',
+    version='0.7.1',
     py_modules=['datpy'],
     description='Python dough for making Dat-flavored pies',
     author='Karissa McKelvey',
