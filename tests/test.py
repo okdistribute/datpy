@@ -34,7 +34,7 @@ class IsolatedTest(DatTest):
     self.assertTrue('amtSpent' in output[0])
 
     status = self.dat.status()
-    self.assertEqual(status['datasets'], 1)
+    self.assertEqual(len(status['datasets']), 2)
     self.assertEqual(status['files'], 1)
     #self.assertEqual(status['rows'], 770)
 
