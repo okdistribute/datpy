@@ -34,7 +34,7 @@ class IsolatedTest(DatTest):
     self.assertTrue('amtSpent' in output[0])
 
     status = self.dat.status()
-    self.assertEqual(len(status['datasets']), 2)
+    self.assertEqual(len(status['datasets']), 1)
     self.assertEqual(status['files'], 1)
     #self.assertEqual(status['rows'], 770)
 
@@ -43,8 +43,7 @@ class IsolatedTest(DatTest):
     dat.destroy()
 
     datasets = self.dat.datasets()
-    self.assertEqual(len(datasets), 2)
-    self.assertTrue('files' in datasets)
+    self.assertEqual(len(datasets), 1)
     self.assertTrue('contracts' in datasets)
 
 
