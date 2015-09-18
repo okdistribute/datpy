@@ -103,6 +103,17 @@ class IOTests(DatTest):
     self.assertEqual(type(obj), dict)
     self.assertEqual(obj["hello"], "mars")
 
+  def test_get_datasets(self):
+    dataset = self.dat.dataset('test_get_datasets')
+    version = dataset.import_file("examples/contracts.csv")
+    output = self.dat.datasets()
+    self.assertEqual(len(output), 1)
+
+  def test_get_files(self):
+    version = self.dat.write_file("examples/blob.txt")
+    output = self.dat.files()
+    self.assertEqual(output[-1], 'package.json')
+    self.assertEqual(len(output), 2)
 
 @unittest.skipIf(pd is False, "skipping pandas tests")
 class TestPandas(DatTest):
