@@ -70,6 +70,11 @@ class Dat(object):
     res = stream_out(p)
     return res['datasets']
 
+  def files(self, **kwargs):
+    p = self.process("dat files", kwargs)
+    res = stream_out(p)
+    return res['files']
+
   def destroy(self, **kwargs):
     p = self.process("dat destroy --no-prompt", kwargs)
     return stream_out(p)
