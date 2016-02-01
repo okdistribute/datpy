@@ -1,9 +1,8 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import json
-import pickle
 import unittest
+import os
 
 import datpy
 
@@ -12,153 +11,30 @@ try:
 except:
   pd = False
 
+path = 'example-download-data'
+
 class DatTest(unittest.TestCase):
 
   @classmethod
   def setUpClass(cls):
-    cls.dat = datpy.Dat('.')
-    cls.dat.init()
+    cls.dat = datpy.Dat()
 
-  @classmethod
   def tearDownClass(cls):
-    cls.dat.destroy()
-
-class IsolatedTest(DatTest):
-
-  def test_insert_with_dataset(self):
-    dataset = self.dat.dataset('contracts')
-    version = dataset.import_file("examples/contracts.csv")
-    self.assertEqual(len(version), 64)
-    output = dataset.export()
-    self.assertEqual(len(output), 770)
-    self.assertTrue('amtSpent' in output[0])
-
-    status = self.dat.status()
-    self.assertEqual(len(status['datasets']), 1)
-    self.assertEqual(status['files'], 1)
-    #self.assertEqual(status['rows'], 770)
-
-    dat = datpy.clone('.', 'test')
-    self.assertEqual(status, dat.status())
-    dat.destroy()
-
-    datasets = self.dat.datasets()
-    self.assertEqual(len(datasets), 1)
-    self.assertTrue('contracts' in datasets)
-
+    cls.dat.close()
+    os.rmdir(path)
 
 class IOTests(DatTest):
 
-  def test_insert_with_dataset(self):
-    dataset = self.dat.dataset('contracts')
-    version = dataset.import_file("examples/contracts.csv")
-    self.assertEqual(len(version), 64)
-    output = dataset.export()
-    self.assertEqual(len(output), 770)
+  def test_link(self):
+    self.link = self.dat.link('examples')
+    self.assertTrue(link.startswith('dat://'))
+    self.assertEquals(len(link.replace('dat://')), 64)
+    self.assertEquals(len(dat._opened), 1)
 
-  def test_insert_with_bad_path_fails(self):
-    dataset = self.dat.dataset('contracts2')
-    with self.assertRaises(Exception):
-        dataset.import_file("not-a-file.csv")
-
-  def test_write_file(self):
-    version = self.dat.write_file("examples/blob.txt")
-    self.assertEqual(len(version), 64)
-    output = self.dat.read("blob.txt")
-    self.assertEqual(output, "hello world\n")
-
-  def test_write_blob_from_python(self):
-    version = self.dat.write("hello.txt", data="hello world")
-    self.assertEqual(len(version), 64)
-    self.assertEqual(self.dat.read("hello.txt"), "hello world")
-
-  def test_write_dict_from_python(self):
-    my_python_object = {
-      "hello": "world",
-      "goodbye": "mars"
-    }
-    binary_data = json.dumps(my_python_object)
-    version = self.dat.write("helloworld_dict", data=binary_data)
-    self.assertEqual(len(version), 64)
-
-    out_data = self.dat.read("helloworld_dict")
-    output = json.loads(out_data)
-    self.assertEqual(type(output), dict)
-    self.assertEqual(output["hello"], "world")
-
-  def test_write_pickle_from_python(self):
-    my_python_object = {
-      "hello": "mars",
-      "goodbye": "world"
-    }
-    data = pickle.dumps(my_python_object)
-    version = self.dat.write("helloworld.pickle", data=data)
-    self.assertEqual(len(version), 64)
-
-    data = self.dat.read("helloworld.pickle")
-    if isinstance(data, dict):
-        obj = data
-    else:
-        obj = pickle.loads(data)
-    self.assertEqual(type(obj), dict)
-    self.assertEqual(obj["hello"], "mars")
-
-  def test_get_datasets(self):
-    dataset = self.dat.dataset('test_get_datasets')
-    version = dataset.import_file("examples/contracts.csv")
-    output = self.dat.datasets()
-    self.assertEqual(len(output), 1)
-
-  def test_get_files(self):
-    version = self.dat.write_file("examples/blob.txt")
-    output = self.dat.files()
-    self.assertEqual(output[-1], 'package.json')
-    self.assertEqual(len(output), 2)
-
-@unittest.skipIf(pd is False, "skipping pandas tests")
-class TestPandas(DatTest):
-
-  def test_pandas(self):
-    # clean column, turn into float
-    df = pd.read_csv('examples/contracts.csv')
-    self.assertEquals(df.shape, (770, 10))
-
-    df['amtSpent'] = df['amtSpent'].str.replace(r'[$,]', '')
-
-    # insert data
-    dataset = self.dat.dataset("pandas")
-    version = dataset.import_dataframe(df)
-    self.assertEqual(64, len(version))
-
-    output = dataset.export()
-    self.assertEqual(len(output), 770)
-
-    df = dataset.export_dataframe()
-
-    # modify a column
-    # create ranked column.
-    df['amtSpentRank'] = df['amtSpent'].rank()
-    self.assertEquals(df.shape, (770, 13))
-
-    # okay, put it back in dat
-    version = dataset.import_dataframe(df, key='key')
-    self.assertEqual(len(version), 64)
-
-    # and get it back out
-    output = dataset.export()
-    self.assertEqual(len(output), 770)
-    df_with_rank = pd.DataFrame.from_dict(output)
-
-    # get the new data in a data frame.
-    # we should see the updated data and new column there.
-    self.assertEquals(df_with_rank.shape, (770, 13))
-
-    # do some type conversion
-    # TODO: save dtypes and automagically parse them for the python user
-    # if coming to/from pandas
-    df_with_rank['amtSpentRank'] = df_with_rank['amtSpentRank'].astype('float')
-
-    self.assertTrue(df_with_rank['amtSpentRank'].equals(df['amtSpentRank']))
+  def test_download(self):
+    self.dat.download(self.link, path)
+    self.assertEquals(os.listdir(path), os.listdir('examples'))
+    self.assertEquals(len(dat._opened), 2)
 
 if __name__ == '__main__':
   unittest.main()
