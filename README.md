@@ -5,7 +5,6 @@ This is a client in python for [Dat](https://dat-data.com)'s command-line API.
 [![travis](https://img.shields.io/travis/karissa/datpy.svg?style=flat)](https://travis-ci.org/karissa/datpy)
 [![pypi](https://img.shields.io/pypi/dm/datpy.svg?style=flat)](https://pypi.python.org/pypi/datpy)
 [![pypi](https://img.shields.io/pypi/v/datpy.svg?style=flat)](https://pypi.python.org/pypi/datpy)
-[![pypi](https://img.shields.io/pypi/pyversions/datpy.svg?style=flat)](https://pypi.python.org/pypi/datpy)
 
 ## What is Dat?
 
@@ -21,16 +20,19 @@ Dat is a peer-to-peer data sync tool. Read the [docs](https://github.com/maxogde
 
     `pip install datpy`
 
+## TODO
+- [ ] Python 3 support
+- [ ] Get metadata
+
 ## Usage
 
 This is a new library and it needs work! Please don't hesitate to send a pull request or to open an issue if you find something wrong or broken.
-
 
 ```python
 import datpy
 ```
 
-## datpy.Dat(home='~/.dat')
+## datpy.Dat(home=)
 
 `Dat` is a class that binds to some global Dat. By default, the metadata storage is placed in `~/.dat`.
 
