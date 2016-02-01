@@ -59,7 +59,6 @@ class Dat(object):
     p = self._call(link, opts)
     for line in iter(p.stdout.readline, b''):
       line = line.decode()
-      print line
       if line.find('Download complete') > -1:
         self._opened.append(p)
         return True
