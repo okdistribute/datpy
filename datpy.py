@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from pkg_resources import parse_version
 
 import pickle
+import os
 import subprocess
 import time
 
