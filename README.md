@@ -1,19 +1,15 @@
 # DAT Python API
 
-This is a client in python for [Dat](https://dat-data.com)'s commandline API. It integrates easily with [pandas](http://pandas.pydata.org).
+This is a client in python for [Dat](https://dat-data.com)'s command-line API.
 
 [![travis](https://img.shields.io/travis/karissa/datpy.svg?style=flat)](https://travis-ci.org/karissa/datpy)
 [![pypi](https://img.shields.io/pypi/dm/datpy.svg?style=flat)](https://pypi.python.org/pypi/datpy)
 [![pypi](https://img.shields.io/pypi/v/datpy.svg?style=flat)](https://pypi.python.org/pypi/datpy)
 [![pypi](https://img.shields.io/pypi/pyversions/datpy.svg?style=flat)](https://pypi.python.org/pypi/datpy)
+
 ## What is Dat?
 
-Dat is a open data project designed to make data more accessible:
-
-* Track incremental changes made in datasets
-* Designed to work with all data: big and small
-
-Read the [docs](https://github.com/maxogden/dat) to learn more about Dat.
+Dat is a peer-to-peer data sync tool. Read the [docs](https://github.com/maxogden/dat) to learn more about Dat.
 
 ## Installation
 
@@ -21,139 +17,63 @@ Read the [docs](https://github.com/maxogden/dat) to learn more about Dat.
 
     `npm install -g dat`
 
-  1. Install pip
-
-  2. Obtain the Python dat package
+  1. Install datpy
 
     `pip install datpy`
 
 ## Usage
 
-This is a new library and it needs work! Please don't hesitate to send a pull request or to open an issue if you find something wrong or broken. It's probably because we messed up!
+This is a new library and it needs work! Please don't hesitate to send a pull request or to open an issue if you find something wrong or broken.
 
-Here's a simple example of how to read a dat's data into a pandas object, and then update the dat accordingly after editing the values.
 
 ```python
 import datpy
-import pandas as pd
-
-dataframe = pd.read_csv('cities.csv')
-
-dat = datpy.Dat()
-
-## initialize dat
-dat.init(tempdir())
-
-## get a dataset (like a table or hdf5 dataframe)
-dataset = dat.dataset('city_codes')
-
-## uses the unique column 'city_code' to identify and version rows
-v1 = dataset.import_dataframe(dataframe, key="city_codes")
-
-## Get the data later at that version:
-df = dataset.export_dataframe(checkout=v1)
 ```
 
-[An ipython notebook example for dat](http://nbviewer.ipython.org/github/pkafei/Dat-Python/blob/master/examples/Using%20Python%20with%20Dat.ipynb) (outdated)
+## datpy.Dat(home='~/.dat')
 
-## datpy.Dat
-
-`Dat` is a class that binds to a Dat on your hard drive. Datasets are loaded streaming from the filesystem into python's memory.
-
-For very large datasets and for code in production, please refer to the [dat commandline documentation](https://github.com/maxogden/dat/blob/master/docs/cli-usage.md) for stable and memory-safe interaction.
+`Dat` is a class that binds to some global Dat. By default, the metadata storage is placed in `~/.dat`.
 
 ```python
 > import datpy
-> mydat = datpy.Dat('./path/to/dat/repo')
-> mydat.init()
+> mydat = datpy.Dat()
 ```
 
-For each command, a `dat` instance accepts any of the options supported by Dat's [commandline api](http://datproject.readthedocs.org/en/latest/cli-docs/)
+For each command, a `dat` instance accepts any of the options supported by Dat's [commandline api](http://github.com/datproject/docs).
 
+### `mydat.link(, path=None, **kwargs*)`
 
-### clone
-
-Clones the dat into a local directory on your filesystem.
-
-`datpy.clone(URL, path=None, **kwargs*)`
+Creates a link to the data and begins to seed it over the network.
 
 Example:
 
 ```python
-> import datpy
-> mydat = datpy.clone('ssh://karissa@mydat.edu:/user/mydats/cities', "./cities")
+> dat.link('./path/to/my/data')
+'dat://a53d819bdf5c3496a2855df83daaac885686cac4b0bccfc580741b04898e3b32'
 ```
 
-## datpy.Dataset
+### `mydat.download(link, path=None)`
 
-Dataset-only commands must be performed using a dataset instance.
+Downloads the link to the local hard drive. This will open a tcp connection to the public network.
+
+You can provide a `path` argument to download the data to a specific folder.
 
 ```python
-> dataset = mydat.dataset("contracts")
+> dat.download()
 ```
 
-### dataset.import_dataframe
+### `mydat.close()`
 
-Import rows from a pandas dataframe.
-
-Returns the new version of the dat repository as a string.
-
-```python
-> df = pd.read_csv('examples/contracts.csv')
-> dataset.import_dataframe(df, key='id')
-'0eafefda2bcfee5'
-```
-
-### dataset.export_dataframe
-
-Get data from the dat as a pandas dataframe.
-
-```python
-df = dataset.export_dataframe(checkout='0eafefda2bcfee5')
-```
-
-#### import_file
-
-Import rows from a tabular file into dat.
-
-Returns the new version of the dat repository as a string.
-
-```python
-> dataset.import_file('tables/cities.csv', key='cityId')
-'abc2f3d234abc234ef1g13d'
-```
-
-#### export
-
-Get the rows in the dat. This returns a list of dictionaries, where each dictionary is the json representation of that row.
-
-```python
-> dataset.export(checkout='abc2f3d234abc234ef1g13d')
-[
-  {'key': 'abc2f3d234abc234ef1g13d',
-  'vote_share': 51.33,
-  'state': 'CA',
-  'republican': True},
-  {'key': 'df1cdf3c23bc234ef1g13d',
-  'vote_share': 49.53,
-  'state': 'DE',
-  'republican': False},
-  ...
-]
-```
-
-# Developers
-
-This is a new library and it needs work! Please don't hesitate to send a pull request.
+Closes any tcp connections opened with `download` or `link`.
 
 ## Contributing
 
-First, create a fork, then install the requirements. Make your change and open a pull request!
+First, create a fork, then install the requirements. Make your change and open a pull request. You might need to create a virtual environment, depending on your setup.
 
 ```bash
-$ git clone http://github.com/<your-fork>/Dat-Python
+$ git clone http://github.com/<your-fork>/datpy
 $ pip install -r requirements.txt
-$ git commit -am "BUG: there was a bug that had this problem"
+$ git commit -am "BUG: there was a bug here fixes #33"
 $ git push origin master
  ... open pull request!
 ```

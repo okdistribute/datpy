@@ -43,14 +43,20 @@ class Dat(object):
     return True
 
   def link(self, path):
+    res = []
     p = self._call('link {0}'.format(path))
     for line in iter(p.stdout.readline, b''):
+      res.append(line)
       line = line.decode()
       index = line.find('dat://')
       if index > -1:
         self._opened.append(p)
         return line[index:].strip()
-    return p
+
+    for line in iter(p.stderr.readline, b''):
+      res.append(line)
+
+    raise Exception(''.join(res))
 
   def download(self, link, path=None):
     opts = {}
@@ -62,10 +68,12 @@ class Dat(object):
       if line.find('Download complete') > -1:
         self._opened.append(p)
         return True
+    for line in iter(p.stderr.readline, b''):
+      if line.find('Does not exist:') > -1:
+        os.mkdir(path)
+        subprocess.Popen.terminate(p)
+        return self.download(link, path)
     return False
-
-  def metadata(self):
-    return self._call('metadata')
 
   def _call(self, cmd, opts=None):
     if opts is None:
