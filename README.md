@@ -52,10 +52,10 @@ Example:
 
 ### `mydat.download(link, path=None)`
 
-Downloads the link to the local hard drive. This will open a TCP connection to the public network to connect to the swarm assocaited to this link. It will download the data and will remain open to re-host it for redundancy. You can provide a `path` argument to download the data to a specific folder.
+Downloads the link to the local hard drive. This will open a TCP connection to the public network to connect to the swarm assocaited to this link. It will download the data and will remain open to re-host it for redundancy. You can provide an optional `path` argument to download the data to a specific folder.
 
 ```python
-> dat.download()
+> dat.download('dat://a53d819bdf5c3496a2855df83daaac885686cac4b0bccfc580741b04898e3b32', path='data')
 ```
 
 ### `mydat.close()`
