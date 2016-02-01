@@ -32,7 +32,7 @@ This is a new library and it needs work! Please don't hesitate to send a pull re
 import datpy
 ```
 
-## datpy.Dat(home='')
+## `datpy.Dat(home='')`
 
 `Dat` is a class that binds to some global Dat. You can provide an optional `home` variable to pass to the dat cli to store your data somewhere besides your local machine. By default, the metadata storage is placed in `~/.dat`.
 
