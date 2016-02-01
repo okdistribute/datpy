@@ -41,22 +41,20 @@ import datpy
 
 For each command, a `dat` instance accepts any of the options supported by Dat's [commandline api](http://github.com/datproject/docs).
 
-### `mydat.link(, path=None, **kwargs*)`
+### `mydat.link(path)`
 
-Creates a link to the data and begins to seed it over the network.
+Creates a fingerprinted dat link to the data. This is a unique link that can be given to `download`. This will open a TCP connection to the public network to share the data.
 
 Example:
 
 ```python
-> dat.link('./path/to/my/data')
+> mydat.link('./path/to/my/data')
 'dat://a53d819bdf5c3496a2855df83daaac885686cac4b0bccfc580741b04898e3b32'
 ```
 
 ### `mydat.download(link, path=None)`
 
-Downloads the link to the local hard drive. This will open a tcp connection to the public network.
-
-You can provide a `path` argument to download the data to a specific folder.
+Downloads the link to the local hard drive. This will open a TCP connection to the public network to connect to the swarm assocaited to this link. It will download the data and will remain open to re-host it for redundancy. You can provide a `path` argument to download the data to a specific folder.
 
 ```python
 > dat.download()
@@ -83,19 +81,13 @@ $ git push origin master
 Install `nosetests` for the best testing environment. If you don't have `pandas` installed, it will skip the pandas tests.
 
 ```bash
-nosetests
+python tests/test.py
 ```
 
 To run just one test
 
 ```bash
-nosetests test.py:SimpleTest.test_rows
-```
-
-To run the entire suite without `nosetests`:
-
-```bash
-python tests/test.py
+nosetests test.py:IOTests.test_link_and_download
 ```
 
 ## Publishing
