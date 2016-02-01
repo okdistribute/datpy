@@ -28,10 +28,6 @@ Dat is a peer-to-peer data sync tool. Read the [docs](https://github.com/maxogde
 
 This is a new library and it needs work! Please don't hesitate to send a pull request or to open an issue if you find something wrong or broken.
 
-```python
-import datpy
-```
-
 ### `datpy.Dat(home='')`
 
 `Dat` is a class that binds to some global Dat. You can provide an optional `home` variable to pass to the dat cli to store your data somewhere besides your local machine. By default, the metadata storage is placed in `~/.dat`.
