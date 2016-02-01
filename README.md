@@ -76,8 +76,6 @@ $ git push origin master
 
 ## Testing
 
-Install `nosetests` for the best testing environment. If you don't have `pandas` installed, it will skip the pandas tests.
-
 ```bash
 python tests/test.py
 ```
