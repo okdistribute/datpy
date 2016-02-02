@@ -69,7 +69,7 @@ class Dat(object):
       if line.find('Does not exist:') > -1:
         os.mkdir(path)
         subprocess.Popen.terminate(p)
-        return self.download(link, path)
+        return self.download(link, path=path)
     return False
 
   def _call(self, cmd, opts=None):

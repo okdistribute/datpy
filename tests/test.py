@@ -35,7 +35,7 @@ class IOTests(DatTest):
     self.assertTrue(link.startswith('dat://'))
     self.assertEquals(len(link.replace('dat://', '')), 64)
     self.assertEquals(len(self.dat._opened), 1)
-    self.dat.download(link, downloadPath)
+    self.dat.download(link, path=downloadPath)
     self.assertEquals(os.listdir(downloadPath + '/examples'), os.listdir(linkPath))
     self.assertEquals(len(self.dat._opened), 2)
 
