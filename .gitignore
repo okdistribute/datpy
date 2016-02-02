@@ -1,3 +1,4 @@
 *.pyc
 .ipynb_checkpoints/
 build/
+example-download-data/examples
