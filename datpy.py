@@ -12,11 +12,6 @@ try:
 except:
   import json
 
-try:
-  import pandas as pd
-except:
-  pd = False
-
 
 COMPATIBLE_DAT_VERSION = '8'
 
@@ -70,6 +65,7 @@ class Dat(object):
         self._opened.append(p)
         return True
     for line in iter(p.stderr.readline, b''):
+      line = line.decode()
       if line.find('Does not exist:') > -1:
         os.mkdir(path)
         subprocess.Popen.terminate(p)
