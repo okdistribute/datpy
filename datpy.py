@@ -13,7 +13,7 @@ except:
   import json
 
 
-COMPATIBLE_DAT_VERSION = '8'
+COMPATIBLE_DAT_VERSION = '8.0.7'
 
 class DatException(Exception):
   pass
