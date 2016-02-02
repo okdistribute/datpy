@@ -17,7 +17,7 @@ class DatTest(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
     if not os.path.exists(downloadDir):
-      os.makedir(downloadDir)
+      os.mkdir(downloadDir)
     cls.downloadPath = os.path.join(downloadDir, EXAMPLE_DIR)
     cls.dat = datpy.Dat()
 
