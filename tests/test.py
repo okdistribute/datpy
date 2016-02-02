@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import unittest
 import os
-import sys # Remove this
 
 import datpy
 
@@ -34,7 +33,6 @@ class DatTest(unittest.TestCase):
 class IOTests(DatTest):
 
   def test_link_and_download(self):
-    print(sys.version)
     link = self.dat.link(linkPath)
     self.assertTrue(link.startswith('dat://'))
     self.assertEquals(len(link.replace('dat://', '')), 64)
