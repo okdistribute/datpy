@@ -12,13 +12,8 @@ try:
 except:
   import json
 
-try:
-  import pandas as pd
-except:
-  pd = False
 
-
-COMPATIBLE_DAT_VERSION = '8'
+COMPATIBLE_DAT_VERSION = '8.0.7'
 
 class DatException(Exception):
   pass
@@ -70,10 +65,11 @@ class Dat(object):
         self._opened.append(p)
         return True
     for line in iter(p.stderr.readline, b''):
+      line = line.decode()
       if line.find('Does not exist:') > -1:
         os.mkdir(path)
         subprocess.Popen.terminate(p)
-        return self.download(link, path)
+        return self.download(link, path=path)
     return False
 
   def _call(self, cmd, opts=None):

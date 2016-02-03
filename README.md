@@ -21,7 +21,7 @@ Dat is a peer-to-peer data sync tool. Read the [docs](https://github.com/maxogde
     `pip install datpy`
 
 ## TODO
-- [ ] Python 3 support
+- [x] Python 3 support
 - [ ] Get metadata
 
 ## Usage
@@ -77,13 +77,19 @@ $ git push origin master
 ## Testing
 
 ```bash
-python tests/test.py
+python -m 'nose'
 ```
 
 To run just one test
 
 ```bash
-nosetests test.py:IOTests.test_link_and_download
+python -m 'nose' tests/test.py:IOTests.test_link_and_download
+```
+
+To run Python 3 tests
+
+```bash
+python3 -m 'nose'
 ```
 
 ## Publishing
