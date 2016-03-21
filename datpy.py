@@ -13,7 +13,7 @@ except:
   import json
 
 
-COMPATIBLE_DAT_VERSION = '8.0.7'
+COMPATIBLE_DAT_VERSION = '9.8.2'
 
 class DatException(Exception):
   pass
@@ -47,7 +47,8 @@ class Dat(object):
       index = line.find('dat://')
       if index > -1:
         self._opened.append(p)
-        return line[index:].strip()
+        link = line[index:].strip()
+        return link
 
     for line in iter(p.stderr.readline, b''):
       res.append(line)
@@ -59,17 +60,11 @@ class Dat(object):
     if path:
       opts['path'] = path
     p = self._call(link, opts)
+    self._opened.append(p)
     for line in iter(p.stdout.readline, b''):
       line = line.decode()
-      if line.find('Download complete') > -1:
-        self._opened.append(p)
+      if line.find('Downloaded to') > -1:
         return True
-    for line in iter(p.stderr.readline, b''):
-      line = line.decode()
-      if line.find('Does not exist:') > -1:
-        os.mkdir(path)
-        subprocess.Popen.terminate(p)
-        return self.download(link, path=path)
     return False
 
   def _call(self, cmd, opts=None):
@@ -94,7 +89,7 @@ def process(cmd, opts):
   if opts is None:
     opts = {}
 
-  cmd = 'dat ' + cmd
+  cmd = 'dat ' + cmd + ' -q'
 
   for key, val in opts.items():
     if (len(key) == 1):
