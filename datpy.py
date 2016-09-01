@@ -13,7 +13,7 @@ except:
   import json
 
 
-COMPATIBLE_DAT_VERSION = '9.8.2'
+COMPATIBLE_DAT_VERSION = '10.0.0'
 
 class DatException(Exception):
   pass
@@ -38,16 +38,17 @@ class Dat(object):
         subprocess.Popen.terminate(p)
     return True
 
-  def link(self, path):
+  def share(self, path):
     res = []
-    p = self._call('link {0}'.format(path))
+    p = self._call('{0}'.format(path))
     for line in iter(p.stdout.readline, b''):
       res.append(line)
       line = line.decode()
-      index = line.find('dat://')
+      preamble = 'Share Link: '
+      index = line.find(preamble)
       if index > -1:
         self._opened.append(p)
-        link = line[index:].strip()
+        link = line[len(preamble):].strip()
         return link
 
     for line in iter(p.stderr.readline, b''):
@@ -55,15 +56,13 @@ class Dat(object):
 
     raise Exception(''.join(res))
 
-  def download(self, link, path=None):
-    opts = {}
-    if path:
-      opts['path'] = path
-    p = self._call(link, opts)
+  def download(self, link, path):
+    p = self._call(link + ' ' + path, {'exit': True})
     self._opened.append(p)
     for line in iter(p.stdout.readline, b''):
       line = line.decode()
-      if line.find('Downloaded to') > -1:
+      print line
+      if line.find('Download Finished') > -1:
         return True
     return False
 
@@ -89,7 +88,7 @@ def process(cmd, opts):
   if opts is None:
     opts = {}
 
-  cmd = 'dat ' + cmd + ' -q'
+  cmd = 'dat ' + cmd
 
   for key, val in opts.items():
     if (len(key) == 1):

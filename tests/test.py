@@ -17,26 +17,25 @@ class DatTest(unittest.TestCase):
   @classmethod
   def setUpClass(cls):
     cls.dat = datpy.Dat()
+    if not os.path.exists(downloadPath):
+      os.mkdir(downloadPath)
 
   @classmethod
   def tearDownClass(cls):
     cls.dat.close()
-    path = os.path.join(downloadPath, EXAMPLE_DIR)
-    files = os.listdir(path)
+    files = os.listdir(downloadPath)
     for filepath in files:
-      os.remove(os.path.join(path, filepath))
-    os.rmdir(path)
+      os.remove(os.path.join(downloadPath, filepath))
     os.rmdir(downloadPath)
 
 class IOTests(DatTest):
 
   def test_link_and_download(self):
-    link = self.dat.link('examples')
-    self.assertTrue(link.startswith('dat://'))
-    self.assertEquals(len(link.replace('dat://', '')), 64)
+    link = self.dat.share(linkPath)
+    self.assertEquals(len(link), 64)
     self.assertEquals(len(self.dat._opened), 1)
-    self.dat.download(link, path=downloadPath)
-    self.assertEquals(os.listdir(downloadPath + '/examples'), os.listdir(linkPath))
+    self.dat.download(link, downloadPath)
+    self.assertEquals(os.listdir(downloadPath), os.listdir(linkPath))
     self.assertEquals(len(self.dat._opened), 2)
 
 if __name__ == '__main__':
